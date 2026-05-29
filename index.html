@@ -211,7 +211,6 @@
       background:var(--bg-card); border-radius:16px; padding:28px 20px;
       border:1px solid var(--border); cursor:pointer;
       transition:all 0.3s; position:relative; overflow:hidden;
-      group: true;
     }
     .cat-card::before {
       content:''; position:absolute; inset:0; opacity:0;
@@ -516,11 +515,16 @@
       <span class="search-close" onclick="closeSearch()">✕</span>
     </div>
     <div class="search-suggestions">
-      <span class="search-tag">一体机电脑</span>
-      <span class="search-tag">迷你主机</span>
-      <span class="search-tag">4K显示器</span>
-      <span class="search-tag">Core i9台式机</span>
-      <span class="search-tag">商用认证工作站</span>
+      <span class="search-tag zh-text">一体机电脑</span>
+      <span class="search-tag zh-text">迷你主机</span>
+      <span class="search-tag zh-text">4K显示器</span>
+      <span class="search-tag zh-text">Core i9台式机</span>
+      <span class="search-tag zh-text">商用认证工作站</span>
+      <span class="search-tag en-text">All-in-One PC</span>
+      <span class="search-tag en-text">Mini PC</span>
+      <span class="search-tag en-text">4K Monitor</span>
+      <span class="search-tag en-text">Core i9 Desktop</span>
+      <span class="search-tag en-text">Workstation</span>
     </div>
   </div>
 </div>
@@ -573,7 +577,7 @@
       <span style="color:#E24B4A;">¥26,197</span>
     </div>
     <button class="btn-checkout zh-text">去结算 →</button>
-    <button class="btn-checkout en-text" style="display:none;">Checkout →</button>
+    <button class="btn-checkout en-text">Checkout →</button>
   </div>
 </div>
 
@@ -702,24 +706,26 @@
 <!-- Marquee -->
 <div class="marquee-bar">
   <div class="marquee-track" id="marqueeTrack">
-    <span class="marquee-item">Intel Core i9 顶级处理器</span>
-    <span class="marquee-item">NVIDIA RTX 4090 独立显卡</span>
-    <span class="marquee-item">4K 120Hz 商用屏幕</span>
-    <span class="marquee-item">DDR5 高速内存</span>
-    <span class="marquee-item">PCIe 5.0 超高速 SSD</span>
-    <span class="marquee-item">Thunderbolt 4 全接口</span>
-    <span class="marquee-item">三年全球联保</span>
-    <span class="marquee-item">Windows 11 Pro 正版</span>
-    <span class="marquee-item">企业级商用认证</span>
-    <span class="marquee-item">全球35+国家配送</span>
-    <span class="marquee-item">Intel Core i9 顶级处理器</span>
-    <span class="marquee-item">NVIDIA RTX 4090 独立显卡</span>
-    <span class="marquee-item">4K 120Hz 商用屏幕</span>
-    <span class="marquee-item">DDR5 高速内存</span>
-    <span class="marquee-item">PCIe 5.0 超高速 SSD</span>
-    <span class="marquee-item">Thunderbolt 4 全接口</span>
-    <span class="marquee-item">三年全球联保</span>
-    <span class="marquee-item">Windows 11 Pro 正版</span>
+    <span class="marquee-item zh-text">Intel Core i9 顶级处理器</span>
+    <span class="marquee-item zh-text">NVIDIA RTX 4090 独立显卡</span>
+    <span class="marquee-item zh-text">4K 120Hz 商用屏幕</span>
+    <span class="marquee-item zh-text">DDR5 高速内存</span>
+    <span class="marquee-item zh-text">PCIe 5.0 超高速 SSD</span>
+    <span class="marquee-item zh-text">Thunderbolt 4 全接口</span>
+    <span class="marquee-item zh-text">三年全球联保</span>
+    <span class="marquee-item zh-text">Windows 11 Pro 正版</span>
+    <span class="marquee-item zh-text">企业级商用认证</span>
+    <span class="marquee-item zh-text">全球35+国家配送</span>
+    <span class="marquee-item en-text">Intel Core i9 Processor</span>
+    <span class="marquee-item en-text">NVIDIA RTX 4090 GPU</span>
+    <span class="marquee-item en-text">4K 120Hz Display</span>
+    <span class="marquee-item en-text">DDR5 High-Speed RAM</span>
+    <span class="marquee-item en-text">PCIe 5.0 Ultra SSD</span>
+    <span class="marquee-item en-text">Thunderbolt 4 Ports</span>
+    <span class="marquee-item en-text">3-Year Global Warranty</span>
+    <span class="marquee-item en-text">Windows 11 Pro License</span>
+    <span class="marquee-item en-text">Enterprise Certified</span>
+    <span class="marquee-item en-text">35+ Countries Shipping</span>
   </div>
 </div>
 
@@ -816,7 +822,7 @@
     </div>
     <div class="products-grid">
       <!-- Product 1 -->
-      <div class="product-card" onclick="this.style.borderColor='#1E6FE8'">
+      <div class="product-card" data-product="X900 Pro 一体机|X900 Pro All-in-One PC|Intel Core i9-14900K / 32GB DDR5 / 2TB NVMe SSD / 27\" 4K IPS|🖥️|15999">
         <div class="product-img">
           <span class="product-badge-hot zh-text">🔥热销</span>
           <span class="product-badge-hot en-text">🔥Hot</span>
@@ -841,8 +847,8 @@
           <div class="product-footer">
             <span class="sales-info zh-text">月售 328 台</span>
             <span class="sales-info en-text">328 sold/mo</span>
-            <button class="btn-add-cart zh-text" onclick="openCart()">加入购物车</button>
-            <button class="btn-add-cart en-text" onclick="openCart()">Add to Cart</button>
+            <button class="btn-add-cart zh-text" onclick="addToCart('X900 Pro 一体机','X900 Pro All-in-One PC','Core i9/32G/2T 27\"4K','🖥️',15999)">加入购物车</button>
+            <button class="btn-add-cart en-text" onclick="addToCart('X900 Pro 一体机','X900 Pro All-in-One PC','Core i9/32G/2T 27\"4K','🖥️',15999)">Add to Cart</button>
           </div>
         </div>
       </div>
@@ -871,8 +877,8 @@
           <div class="product-footer">
             <span class="sales-info zh-text">月售 512 台</span>
             <span class="sales-info en-text">512 sold/mo</span>
-            <button class="btn-add-cart zh-text" onclick="openCart()">加入购物车</button>
-            <button class="btn-add-cart en-text" onclick="openCart()">Add to Cart</button>
+            <button class="btn-add-cart zh-text" onclick="addToCart('M5 Pro 迷你主机','M5 Pro Mini PC','Core i7/16G/1T 三屏输出','🖳',4299)">加入购物车</button>
+            <button class="btn-add-cart en-text" onclick="addToCart('M5 Pro 迷你主机','M5 Pro Mini PC','Core i7/16G/1T 三屏输出','🖳',4299)">Add to Cart</button>
           </div>
         </div>
       </div>
@@ -901,8 +907,8 @@
           <div class="product-footer">
             <span class="sales-info zh-text">月售 445 台</span>
             <span class="sales-info en-text">445 sold/mo</span>
-            <button class="btn-add-cart zh-text" onclick="openCart()">加入购物车</button>
-            <button class="btn-add-cart en-text" onclick="openCart()">Add to Cart</button>
+            <button class="btn-add-cart zh-text" onclick="addToCart('J32U 商用显示器','J32U Commercial Monitor','32\" 4K/120Hz/USB-C PD100W','🖵',3299)">加入购物车</button>
+            <button class="btn-add-cart en-text" onclick="addToCart('J32U 商用显示器','J32U Commercial Monitor','32\" 4K/120Hz/USB-C PD100W','🖵',3299)">Add to Cart</button>
           </div>
         </div>
       </div>
@@ -930,8 +936,8 @@
           <div class="product-footer">
             <span class="sales-info zh-text">月售 67 套</span>
             <span class="sales-info en-text">67 sold/mo</span>
-            <button class="btn-add-cart zh-text" onclick="openCart()">加入购物车</button>
-            <button class="btn-add-cart en-text" onclick="openCart()">Add to Cart</button>
+            <button class="btn-add-cart zh-text" onclick="addToCart('工作站旗舰台式机套装','Pro Workstation Desktop','Xeon W/64G ECC/4T/RTX4080','🖨',28800)">加入购物车</button>
+            <button class="btn-add-cart en-text" onclick="addToCart('工作站旗舰台式机套装','Pro Workstation Desktop','Xeon W/64G ECC/4T/RTX4080','🖨',28800)">Add to Cart</button>
           </div>
         </div>
       </div>
@@ -1319,36 +1325,176 @@ function closeSearch() { document.getElementById('searchOverlay').classList.remo
 document.getElementById('searchOverlay').addEventListener('click', function(e){ if(e.target===this)closeSearch(); });
 document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeSearch(); closeCart(); } });
 
-// Cart
+// Search tag click
+document.querySelectorAll('.search-tag').forEach(function(tag) {
+  tag.addEventListener('click', function() {
+    document.getElementById('searchInput').value = this.textContent;
+    closeSearch();
+  });
+});
+
+// ===== CART SYSTEM =====
+var cartData = [
+  { id: 1, name: 'JISHU X900 一体机', nameEn: 'JISHU X900 All-in-One', spec: 'Core i9 / 32GB / 1TB SSD', icon: '🖥️', price: 12999, qty: 1 },
+  { id: 2, name: 'BLCOOF M3 迷你主机', nameEn: 'BLCOOF M3 Mini PC', spec: 'Core i7 / 16GB / 512GB', icon: '🖳', price: 3299, qty: 2 }
+];
+
+function renderCart() {
+  var isZh = document.documentElement.getAttribute('data-lang') !== 'en';
+  var body = document.querySelector('.cart-body');
+  var total = 0;
+  var itemCount = 0;
+
+  if (cartData.length === 0) {
+    body.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#718096;font-size:14px;">🛒 ' + (isZh ? '购物车是空的' : 'Cart is empty') + '</div>';
+  } else {
+    var html = '';
+    cartData.forEach(function(item) {
+      var itemTotal = item.price * item.qty;
+      total += itemTotal;
+      itemCount += item.qty;
+      html += '<div class="cart-item" data-id="' + item.id + '">' +
+        '<div class="cart-item-img">' + item.icon + '</div>' +
+        '<div class="cart-item-info">' +
+          '<div class="cart-item-name">' + (isZh ? item.name : item.nameEn) + '</div>' +
+          '<div class="cart-item-spec">' + item.spec + '</div>' +
+          '<div class="cart-item-actions">' +
+            '<div class="qty-ctrl">' +
+              '<button class="qty-btn" onclick="changeQty(' + item.id + ',-1)">−</button>' +
+              '<span class="qty-num">' + item.qty + '</span>' +
+              '<button class="qty-btn" onclick="changeQty(' + item.id + ',1)">+</button>' +
+            '</div>' +
+            '<span class="cart-item-price">¥' + itemTotal.toLocaleString() + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    });
+    body.innerHTML = html;
+  }
+
+  // Update total
+  var totalEl = document.querySelector('.cart-total');
+  if (totalEl) {
+    totalEl.innerHTML = '<span class="zh-text">合计</span><span class="en-text">Total</span><span style="color:#E24B4A;">¥' + total.toLocaleString() + '</span>';
+  }
+
+  // Update badge
+  var badges = document.querySelectorAll('.cart-badge');
+  badges.forEach(function(b) { b.textContent = itemCount; });
+}
+
+function changeQty(id, delta) {
+  var item = cartData.find(function(c) { return c.id === id; });
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  renderCart();
+}
+
+function removeFromCart(id) {
+  cartData = cartData.filter(function(c) { return c.id !== id; });
+  renderCart();
+}
+
+function addToCart(name, nameEn, spec, icon, price) {
+  var existing = cartData.find(function(c) { return c.name === name; });
+  if (existing) {
+    existing.qty++;
+  } else {
+    cartData.push({ id: Date.now(), name: name, nameEn: nameEn, spec: spec, icon: icon, price: price, qty: 1 });
+  }
+  renderCart();
+  openCart();
+}
+
 function openCart() { document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartOverlay').classList.add('open'); }
 function closeCart() { document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
 
+// Initialize cart on load
+renderCart();
+
 // Countdown Timer
 function updateCountdown() {
-  const now = new Date();
-  const midnight = new Date(now); midnight.setHours(23,59,59,0);
-  const diff = midnight - now;
-  const h = Math.floor(diff/3600000); const m = Math.floor((diff%3600000)/60000); const s = Math.floor((diff%60000)/1000);
-  document.getElementById('hours').textContent = String(h).padStart(2,'0');
-  document.getElementById('minutes').textContent = String(m).padStart(2,'0');
-  document.getElementById('seconds').textContent = String(s).padStart(2,'0');
+  var now = new Date();
+  var midnight = new Date(now); midnight.setHours(23,59,59,999);
+  var diff = midnight - now;
+  if (diff < 0) diff += 86400000;
+  var h = Math.floor(diff/3600000); var m = Math.floor((diff%3600000)/60000); var s = Math.floor((diff%60000)/1000);
+  var hEl = document.getElementById('hours');
+  var mEl = document.getElementById('minutes');
+  var sEl = document.getElementById('seconds');
+  if (hEl) hEl.textContent = String(h).padStart(2,'0');
+  if (mEl) mEl.textContent = String(m).padStart(2,'0');
+  if (sEl) sEl.textContent = String(s).padStart(2,'0');
 }
 setInterval(updateCountdown, 1000); updateCountdown();
 
 // Scroll to top button
 window.addEventListener('scroll', function(){
-  const btn = document.getElementById('scrollTop');
-  btn.classList.toggle('show', window.scrollY > 400);
+  var btn = document.getElementById('scrollTop');
+  if (btn) btn.classList.toggle('show', window.scrollY > 400);
 });
 
-// Slider dot animation
-let currentSlide = 0;
-const dots = document.querySelectorAll('.dot');
-setInterval(() => {
+// Slider dot animation - with content switching
+var slideContents = [
+  { titleZh: '高端电脑硬件<br><span class="gradient-text">极致性能体验</span>',
+    titleEn: 'Premium Computing<br><span class="gradient-text">Extreme Performance</span>',
+    descZh: '面向商务精英、设计师、企业办公。一体机、迷你主机、商用显示器、全套台式电脑，全球品质保障，极简设计，卓越性能。',
+    descEn: 'Designed for business elites, designers and enterprise users. All-in-One PCs, Mini PCs, Commercial Monitors & Full Desktops. Global quality assurance.',
+    product: 'JISHU X900 Pro', spec: 'Intel Core i9-14900K · 32GB DDR5 · 2TB NVMe', price: '¥15,999' },
+  { titleZh: '迷你主机<br><span class="gradient-text">小机身大能量</span>',
+    titleEn: 'Mini PC<br><span class="gradient-text">Small Body, Big Power</span>',
+    descZh: 'M5 Pro 迷你主机，Intel Core i7 处理器，三屏4K输出，仅0.6L体积。办公娱乐全能选手。',
+    descEn: 'M5 Pro Mini PC with Intel Core i7, triple 4K output, only 0.6L volume. The ultimate compact workstation.',
+    product: 'BLCOOF M5 Pro', spec: 'Intel Core i7-13700H · 16GB · 1TB SSD', price: '¥4,299' },
+  { titleZh: '4K商用显示器<br><span class="gradient-text">专业色彩精准还原</span>',
+    titleEn: '4K Monitor<br><span class="gradient-text">Professional Color Accuracy</span>',
+    descZh: 'J32U 商用显示器，32英寸4K UHD IPS面板，120Hz刷新率，USB-C PD100W供电，ΔE<1色彩精度。',
+    descEn: 'J32U Commercial Monitor, 32" 4K UHD IPS, 120Hz, USB-C PD100W, ΔE<1 color accuracy.',
+    product: 'JISHU J32U', spec: '32" 4K UHD IPS · 120Hz · USB-C PD100W', price: '¥3,299' },
+  { titleZh: '工作站级台式机<br><span class="gradient-text】">极致算力释放</span>',
+    titleEn: 'Workstation Desktop<br><span class="gradient-text">Ultimate Computing Power</span>',
+    descZh: 'Xeon W工作站处理器，64GB ECC内存，4TB NVMe SSD，RTX 4080独立显卡，为专业创作者打造。',
+    descEn: 'Xeon W processor, 64GB ECC RAM, 4TB NVMe SSD, RTX 4080 GPU. Built for professional creators.',
+    product: 'Pro Workstation', spec: 'Intel Xeon W · 64GB ECC · RTX 4080', price: '¥28,800' }
+];
+
+function updateSlide(index) {
+  var isZh = document.documentElement.getAttribute('data-lang') !== 'en';
+  var slide = slideContents[index];
+  var h1 = document.querySelector('.hero h1');
+  var p = document.querySelector('.hero p:not(:nth-of-type(2))'); // first <p>
+  var allP = document.querySelectorAll('.hero p');
+  var heroName = document.querySelector('.hero-product-name');
+  var heroSpec = document.querySelector('.hero-product-spec');
+  var heroPrice = document.querySelector('.hero-product-price');
+
+  if (h1) h1.innerHTML = '<span class="zh-text">' + slide.titleZh + '</span><span class="en-text">' + slide.titleEn + '</span>';
+  if (allP[0]) { allP[0].className = 'zh-text'; allP[0].textContent = slide.descZh; }
+  if (allP[1]) { allP[1].className = 'en-text'; allP[1].textContent = slide.descEn; }
+  if (heroName) heroName.textContent = slide.product;
+  if (heroSpec) heroSpec.textContent = slide.spec;
+  if (heroPrice) heroPrice.textContent = slide.price;
+}
+
+var currentSlide = 0;
+var dots = document.querySelectorAll('.dot');
+setInterval(function() {
+  if (dots.length === 0) return;
   dots[currentSlide].classList.remove('active');
   currentSlide = (currentSlide + 1) % dots.length;
   dots[currentSlide].classList.add('active');
-}, 3000);
+  updateSlide(currentSlide);
+}, 4000);
+
+// Dot click handler
+dots.forEach(function(dot, idx) {
+  dot.addEventListener('click', function() {
+    dots[currentSlide].classList.remove('active');
+    currentSlide = idx;
+    dots[currentSlide].classList.add('active');
+    updateSlide(currentSlide);
+  });
+});
 </script>
 </body>
 </html>
