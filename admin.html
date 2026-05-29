@@ -298,7 +298,7 @@
     </div>
 
     <div style="margin-top:auto;padding:16px;">
-      <div class="nav-item" style="background:rgba(255,255,255,0.05);border-radius:8px;padding:10px 12px;" onclick="window.open('index.html')">
+      <div class="nav-item" style="background:rgba(255,255,255,0.05);border-radius:8px;padding:10px 12px;" onclick="window.location.href='index.html'">
         <span class="nav-icon">🌐</span>
         <span>查看前台</span>
       </div>
@@ -601,7 +601,7 @@
                 </tr>
                 <tr>
                   <td><input type="checkbox"></td>
-                  <td style="font-size:12px;">#LD20260528098</td>
+                  <td style="font-size:12px;">#JS20260528098</td>
                   <td>张 ** 理</td>
                   <td><div class="product-thumb"><div class="thumb-img">🖥️</div><div><div class="thumb-name">工作站旗舰套装</div><div class="thumb-sku">Xeon/64G/4T</div></div></div></td>
                   <td style="font-weight:600;color:var(--danger);">¥28,800</td>
@@ -969,13 +969,13 @@
         <div class="page-title"><div class="page-title-text">⚙️ <span>系统设置</span></div></div>
         <div class="settings-grid">
           <div class="settings-nav">
-            <div class="settings-nav-item active">🏪 基础信息</div>
-            <div class="settings-nav-item">🔐 账号安全</div>
-            <div class="settings-nav-item">💳 支付配置</div>
-            <div class="settings-nav-item">📧 邮件配置</div>
-            <div class="settings-nav-item">👤 权限管理</div>
-            <div class="settings-nav-item">💾 数据备份</div>
-            <div class="settings-nav-item">🌐 API接口</div>
+            <div class="settings-nav-item active" onclick="switchSettingsNav(this,'基础信息')">🏪 基础信息</div>
+            <div class="settings-nav-item" onclick="switchSettingsNav(this,'账号安全')">🔐 账号安全</div>
+            <div class="settings-nav-item" onclick="switchSettingsNav(this,'支付配置')">💳 支付配置</div>
+            <div class="settings-nav-item" onclick="switchSettingsNav(this,'邮件配置')">📧 邮件配置</div>
+            <div class="settings-nav-item" onclick="switchSettingsNav(this,'权限管理')">👤 权限管理</div>
+            <div class="settings-nav-item" onclick="switchSettingsNav(this,'数据备份')">💾 数据备份</div>
+            <div class="settings-nav-item" onclick="switchSettingsNav(this,'API接口')">🌐 API接口</div>
           </div>
           <div class="card" style="margin:0;">
             <div class="card-header"><span class="card-title">网站基础信息</span><button class="btn btn-primary btn-sm">保存设置</button></div>
@@ -1006,23 +1006,85 @@
 
 <script>
 function switchSection(id, el) {
-  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if(el) el.classList.add('active');
-  const titles = {
+  document.querySelectorAll('.page-section').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  var target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  if (el) el.classList.add('active');
+  var titles = {
     dashboard:'数据看板', orders:'订单管理', products:'商品管理', users:'用户管理',
     marketing:'营销管理', content:'内容装修', aftersale:'售后管理',
     logistics:'物流配置', i18n:'双语管理', settings:'系统设置'
   };
-  document.getElementById('breadcrumbCurrent').textContent = titles[id] || id;
+  var bc = document.getElementById('breadcrumbCurrent');
+  if (bc) bc.textContent = titles[id] || id;
 }
 
 function switchTab(el, group) {
-  const parent = el.closest('.tabs');
-  parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  var parent = el.closest('.tabs');
+  if (parent) parent.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
   el.classList.add('active');
+  // Show brief feedback about selected tab
+  if (group === 'tab-orders') {
+    showToast('已切换到: ' + el.textContent.trim());
+  }
+  if (group === 'mkt') {
+    showToast('已切换到: ' + el.textContent.trim());
+  }
 }
+
+function switchSettingsNav(el, name) {
+  var nav = el.closest('.settings-nav');
+  if (nav) nav.querySelectorAll('.settings-nav-item').forEach(function(n) { n.classList.remove('active'); });
+  el.classList.add('active');
+  // Update card title
+  var titleEl = document.querySelector('#settings .card-title');
+  if (titleEl) titleEl.textContent = name;
+}
+
+// Action link feedback
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.classList.contains('action-link')) {
+    var action = e.target.textContent.trim();
+    // Show a brief toast notification for action feedback
+    showToast(action + ' 操作已执行');
+  }
+});
+
+// Button feedback for primary actions
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.classList.contains('btn-primary') || (e.target && e.target.classList.contains('btn-success'))) {
+    var text = e.target.textContent.trim();
+    if (text.indexOf('刷新') !== -1) { showToast('数据已刷新 ✅'); }
+    else if (text.indexOf('导出') !== -1) { showToast('报表导出中... 📥'); }
+    else if (text.indexOf('保存') !== -1) { showToast('设置已保存 ✅'); }
+    else if (text.indexOf('新建') !== -1 || text.indexOf('新增') !== -1 || text.indexOf('添加') !== -1) { showToast('请填写表单 📝'); }
+    else if (text.indexOf('发布') !== -1) { showToast('已成功发布 🚀'); }
+    else if (text.indexOf('发货') !== -1) { showToast('发货处理中... 📦'); }
+    else if (text.indexOf('搜索') !== -1 || text.indexOf('筛选') !== -1) { showToast('查询完成 🔍'); }
+  }
+});
+
+// Toast notification system
+function showToast(msg) {
+  var existing = document.querySelector('.admin-toast');
+  if (existing) existing.remove();
+  var toast = document.createElement('div');
+  toast.className = 'admin-toast';
+  toast.textContent = msg;
+  toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#0A2540;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,0.2);animation:toastIn 0.3s ease;';
+  document.body.appendChild(toast);
+  setTimeout(function() {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s';
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 2200);
+}
+
+// Add toast animation keyframe
+var style = document.createElement('style');
+style.textContent = '@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}';
+document.head.appendChild(style);
 </script>
 </body>
 </html>
