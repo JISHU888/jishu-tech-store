@@ -1,1010 +1,1103 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>集数科技 · 商家后台管理系统</title>
-  <style>
-    :root {
-      --sidebar-bg: #0A2540;
-      --sidebar-hover: #1a3a5c;
-      --sidebar-active: #1E6FE8;
-      --accent: #1E6FE8;
-      --accent-light: #E6F1FB;
-      --success: #00B96B;
-      --warning: #E8B84B;
-      --danger: #E24B4A;
-      --gold: #C6973F;
-      --bg-page: #f0f4f8;
-      --bg-card: #ffffff;
-      --border: #e2e8f0;
-      --text-primary: #1a202c;
-      --text-secondary: #4a5568;
-      --text-muted: #718096;
-      --radius: 12px;
-      --shadow: 0 2px 12px rgba(0,0,0,0.07);
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif; background:var(--bg-page); color:var(--text-primary); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JISHU ADMIN — AI 终端管理系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-void: #030913;
+  --bg-deep: #060f1e;
+  --bg-mid: #0a1628;
+  --bg-card: rgba(10,22,48,0.9);
+  --neon-cyan: #00D4FF;
+  --neon-blue: #0066FF;
+  --neon-green: #00FF88;
+  --neon-gold: #FFB800;
+  --neon-red: #FF4545;
+  --neon-purple: #7B2FFF;
+  --text-primary: #E8F4FF;
+  --text-secondary: #7BA3CC;
+  --text-dim: #3D6080;
+  --border-glow: rgba(0,212,255,0.25);
+  --font-mono: 'Share Tech Mono','Courier New',monospace;
+  --font-hud: 'Orbitron',sans-serif;
+  --font-body: 'Rajdhani',sans-serif;
+  --sidebar-w: 220px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg-void);color:var(--text-primary);font-family:var(--font-body);overflow-x:hidden;min-height:100vh;display:flex;}
 
-    /* Layout */
-    .admin-layout { display:flex; height:100vh; overflow:hidden; }
+/* SCANLINES */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,0.012) 2px,rgba(0,212,255,0.012) 4px);pointer-events:none;z-index:9999;}
 
-    /* Sidebar */
-    .sidebar {
-      width:220px; background:var(--sidebar-bg); height:100vh; overflow-y:auto;
-      flex-shrink:0; display:flex; flex-direction:column;
-      scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.1) transparent;
-    }
-    .sidebar-logo {
-      padding:20px 18px; border-bottom:1px solid rgba(255,255,255,0.08);
-      display:flex; align-items:center; gap:10px;
-    }
-    .logo-mark {
-      width:34px; height:34px; background:linear-gradient(135deg,#1E6FE8,#4A90F0);
-      border-radius:8px; display:flex; align-items:center; justify-content:center;
-      font-size:13px; font-weight:700; color:#fff; flex-shrink:0;
-    }
-    .logo-text { font-size:13px; font-weight:700; color:#fff; line-height:1.3; }
-    .logo-sub { font-size:10px; color:rgba(255,255,255,0.5); }
-    .sidebar-section { padding:8px 12px 4px; font-size:10px; color:rgba(255,255,255,0.35); letter-spacing:1.5px; text-transform:uppercase; margin-top:8px; }
-    .nav-item {
-      display:flex; align-items:center; gap:10px; padding:10px 18px; cursor:pointer;
-      color:rgba(255,255,255,0.65); font-size:13px; transition:all 0.2s;
-      border-radius:0; position:relative;
-    }
-    .nav-item:hover { background:var(--sidebar-hover); color:#fff; }
-    .nav-item.active { background:var(--sidebar-active); color:#fff; }
-    .nav-item.active::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:#fff; border-radius:0 3px 3px 0; }
-    .nav-icon { width:18px; text-align:center; font-size:15px; flex-shrink:0; }
-    .nav-badge { margin-left:auto; background:var(--danger); color:#fff; font-size:10px; font-weight:700; padding:1px 6px; border-radius:10px; }
-    .nav-badge.gold { background:var(--gold); }
+/* GRID BG */
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:50px 50px;z-index:0;pointer-events:none;}
 
-    /* Main area */
-    .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+/* ========== SIDEBAR ========== */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:rgba(3,9,19,0.97);
+  border-right:1px solid rgba(0,212,255,0.12);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;
+  z-index:100;overflow-y:auto;
+}
 
-    /* Top header */
-    .admin-header {
-      background:var(--bg-card); border-bottom:1px solid var(--border);
-      height:58px; display:flex; align-items:center; justify-content:space-between;
-      padding:0 24px; flex-shrink:0;
-    }
-    .header-left { display:flex; align-items:center; gap:12px; }
-    .breadcrumb { font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:6px; }
-    .breadcrumb .current { color:var(--text-primary); font-weight:500; }
-    .header-right { display:flex; align-items:center; gap:12px; }
-    .header-btn {
-      width:34px; height:34px; border-radius:8px; background:none; border:1px solid var(--border);
-      display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; font-size:15px;
-    }
-    .header-btn:hover { background:var(--bg-page); }
-    .notification-dot { position:relative; }
-    .notification-dot::after { content:''; position:absolute; top:6px; right:6px; width:6px; height:6px; background:var(--danger); border-radius:50%; border:2px solid var(--bg-card); }
-    .admin-user { display:flex; align-items:center; gap:8px; cursor:pointer; padding:4px 8px; border-radius:8px; transition:background 0.2s; }
-    .admin-user:hover { background:var(--bg-page); }
-    .user-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#534AB7); display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:600; }
-    .user-name { font-size:13px; font-weight:500; }
-    .user-role { font-size:11px; color:var(--text-muted); }
+.sidebar-logo{
+  padding:20px 16px;
+  border-bottom:1px solid rgba(0,212,255,0.1);
+  display:flex;align-items:center;gap:12px;
+}
+.logo-icon-sm{
+  width:36px;height:36px;
+  border:1.5px solid var(--neon-cyan);
+  background:rgba(0,212,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-hud);font-size:13px;font-weight:900;
+  color:var(--neon-cyan);
+  text-shadow:0 0 8px var(--neon-cyan);
+  clip-path:polygon(10% 0%,90% 0%,100% 10%,100% 90%,90% 100%,10% 100%,0% 90%,0% 10%);
+  flex-shrink:0;
+}
+.logo-text-sm{line-height:1.2;}
+.logo-text-sm .main{font-family:var(--font-hud);font-size:14px;font-weight:700;color:var(--text-primary);letter-spacing:2px;}
+.logo-text-sm .sub{font-family:var(--font-mono);font-size:8px;color:var(--neon-cyan);letter-spacing:2px;opacity:0.7;}
 
-    /* Content area */
-    .content { flex:1; overflow-y:auto; padding:24px; }
+.sidebar-sys{
+  padding:10px 16px;
+  border-bottom:1px solid rgba(0,212,255,0.08);
+  background:rgba(0,212,255,0.02);
+}
+.sys-label{font-family:var(--font-mono);font-size:8px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.sys-val{font-family:var(--font-mono);font-size:10px;color:var(--neon-green);}
 
-    /* Page sections */
-    .page-section { display:none; }
-    .page-section.active { display:block; }
-    .page-title { font-size:20px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; }
-    .page-title-text { display:flex; align-items:center; gap:10px; }
+.sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;}
 
-    /* Metric cards grid */
-    .metrics-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
-    .metric-card {
-      background:var(--bg-card); border-radius:var(--radius); padding:20px;
-      border:1px solid var(--border); box-shadow:var(--shadow);
-    }
-    .metric-label { font-size:12px; color:var(--text-muted); margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; }
-    .metric-value { font-size:26px; font-weight:700; margin-bottom:6px; }
-    .metric-change { font-size:12px; display:flex; align-items:center; gap:4px; }
-    .change-up { color:var(--success); }
-    .change-down { color:var(--danger); }
-    .metric-icon { font-size:22px; }
+.nav-group-label{
+  font-family:var(--font-mono);font-size:8px;color:var(--text-dim);
+  letter-spacing:3px;text-transform:uppercase;
+  padding:10px 6px 4px;
+  border-top:1px solid rgba(0,212,255,0.06);
+  margin-top:8px;
+}
+.nav-group-label:first-child{margin-top:0;border-top:none;}
 
-    /* Cards */
-    .card { background:var(--bg-card); border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); margin-bottom:16px; }
-    .card-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-    .card-title { font-size:14px; font-weight:600; }
-    .card-body { padding:20px; }
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;
+  border-radius:3px;
+  cursor:pointer;
+  transition:all 0.25s;
+  border:1px solid transparent;
+  position:relative;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-dim);
+  letter-spacing:0.5px;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+}
+.nav-item:hover{color:var(--neon-cyan);background:rgba(0,212,255,0.05);border-color:rgba(0,212,255,0.12);}
+.nav-item.active{color:var(--neon-cyan);background:rgba(0,212,255,0.08);border-color:rgba(0,212,255,0.25);box-shadow:0 0 10px rgba(0,212,255,0.08);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--neon-cyan);box-shadow:0 0 6px var(--neon-cyan);}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+.nav-badge{
+  margin-left:auto;
+  background:var(--neon-cyan);color:var(--bg-void);
+  font-family:var(--font-mono);font-size:8px;font-weight:700;
+  padding:1px 6px;
+  min-width:18px;text-align:center;
+}
 
-    /* Chart placeholder */
-    .chart-placeholder {
-      height:220px; background:linear-gradient(to bottom, #f8faff, #eef2ff);
-      border-radius:8px; display:flex; align-items:center; justify-content:center;
-      flex-direction:column; gap:8px; position:relative; overflow:hidden;
-    }
-    .chart-bars { display:flex; align-items:flex-end; gap:8px; height:160px; }
-    .chart-bar { width:32px; background:var(--accent); border-radius:6px 6px 0 0; opacity:0.8; transition:opacity 0.2s; cursor:pointer; position:relative; }
-    .chart-bar:hover { opacity:1; }
-    .chart-bar::after { content:attr(data-val); position:absolute; top:-22px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--text-muted); white-space:nowrap; }
-    .chart-labels { display:flex; gap:8px; }
-    .chart-label { width:32px; text-align:center; font-size:10px; color:var(--text-muted); }
+.sidebar-footer{
+  padding:12px 16px;
+  border-top:1px solid rgba(0,212,255,0.08);
+  background:rgba(0,212,255,0.02);
+}
+.sidebar-user{display:flex;align-items:center;gap:10px;}
+.user-avatar{
+  width:32px;height:32px;
+  background:linear-gradient(135deg,rgba(0,102,255,0.3),rgba(0,212,255,0.2));
+  border:1px solid rgba(0,212,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+}
+.user-info .name{font-family:var(--font-hud);font-size:11px;color:var(--text-primary);}
+.user-info .role{font-family:var(--font-mono);font-size:9px;color:var(--neon-cyan);opacity:0.7;letter-spacing:1px;}
 
-    /* Table */
-    table { width:100%; border-collapse:collapse; }
-    th { font-size:12px; font-weight:600; color:var(--text-muted); padding:12px 16px; text-align:left; background:#f7f9fc; border-bottom:1px solid var(--border); }
-    td { font-size:13px; padding:12px 16px; border-bottom:1px solid #f0f4f8; vertical-align:middle; }
-    tr:hover td { background:#fafbff; }
-    tr:last-child td { border-bottom:none; }
-    .status-badge { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; padding:3px 10px; border-radius:20px; }
-    .status-paid { background:rgba(0,185,107,0.1); color:var(--success); }
-    .status-pending { background:rgba(232,184,75,0.1); color:#BA7517; }
-    .status-shipped { background:rgba(30,111,232,0.1); color:var(--accent); }
-    .status-cancelled { background:rgba(226,75,74,0.1); color:var(--danger); }
-    .status-onshelf { background:rgba(0,185,107,0.1); color:var(--success); }
-    .status-offshelf { background:rgba(113,128,150,0.1); color:var(--text-muted); }
-    .action-link { color:var(--accent); font-size:12px; cursor:pointer; padding:0 6px; }
-    .action-link:hover { text-decoration:underline; }
-    .action-link.danger { color:var(--danger); }
+/* ========== MAIN CONTENT ========== */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;position:relative;z-index:1;}
 
-    /* Product thumb */
-    .product-thumb { display:flex; align-items:center; gap:12px; }
-    .thumb-img { width:44px; height:44px; background:#f0f4ff; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
-    .thumb-name { font-size:13px; font-weight:500; }
-    .thumb-sku { font-size:11px; color:var(--text-muted); }
+/* TOPBAR */
+.topbar{
+  position:sticky;top:0;z-index:90;
+  height:52px;
+  background:rgba(3,9,19,0.95);
+  border-bottom:1px solid rgba(0,212,255,0.1);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  backdrop-filter:blur(10px);
+}
+.topbar-left{display:flex;align-items:center;gap:8px;}
+.breadcrumb{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;}
+.breadcrumb .sep{margin:0 6px;opacity:0.4;}
+.breadcrumb .current{color:var(--neon-cyan);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.top-stat{
+  display:flex;align-items:center;gap:6px;
+  padding:4px 12px;
+  border:1px solid rgba(0,212,255,0.12);
+  background:rgba(0,212,255,0.03);
+  font-family:var(--font-mono);font-size:9px;letter-spacing:1px;
+}
+.top-stat .label{color:var(--text-dim);}
+.top-stat .val{color:var(--neon-cyan);}
+.btn-top{
+  height:30px;padding:0 14px;
+  background:transparent;
+  border:1px solid rgba(0,212,255,0.25);
+  color:var(--neon-cyan);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:1px;
+  cursor:pointer;transition:all 0.3s;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+}
+.btn-top:hover{background:rgba(0,212,255,0.1);border-color:var(--neon-cyan);box-shadow:0 0 10px rgba(0,212,255,0.2);}
 
-    /* Buttons */
-    .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; border:none; transition:all 0.2s; }
-    .btn-primary { background:var(--accent); color:#fff; }
-    .btn-primary:hover { background:#1a60d0; }
-    .btn-outline { background:none; border:1px solid var(--border); color:var(--text-secondary); }
-    .btn-outline:hover { background:var(--bg-page); }
-    .btn-success { background:var(--success); color:#fff; }
-    .btn-danger { background:var(--danger); color:#fff; }
-    .btn-sm { padding:5px 10px; font-size:12px; border-radius:6px; }
+/* CONTENT AREA */
+.content{flex:1;padding:28px;overflow-y:auto;}
 
-    /* Form */
-    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    .form-group { margin-bottom:16px; }
-    .form-label { font-size:12px; font-weight:500; color:var(--text-secondary); margin-bottom:6px; display:block; }
-    .form-input {
-      width:100%; border:1px solid var(--border); border-radius:8px; padding:9px 12px;
-      font-size:13px; outline:none; transition:border-color 0.2s; background:#fff;
-    }
-    .form-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(30,111,232,0.1); }
-    .form-select { width:100%; border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px; outline:none; background:#fff; cursor:pointer; }
-    textarea.form-input { resize:vertical; min-height:100px; }
+/* PAGE SECTIONS */
+.page-section{display:none;}
+.page-section.active{display:block;}
 
-    /* Dashboard top products */
-    .top-product-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #f0f4f8; }
-    .top-product-row:last-child { border-bottom:none; }
-    .top-rank { width:22px; height:22px; border-radius:50%; background:var(--accent-light); color:var(--accent); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .top-rank.r1 { background:rgba(198,151,63,0.15); color:var(--gold); }
-    .top-rank.r2 { background:rgba(113,128,150,0.12); color:var(--text-muted); }
-    .top-rank.r3 { background:rgba(198,151,63,0.08); color:var(--gold); }
-    .top-product-name { flex:1; font-size:13px; font-weight:500; }
-    .top-product-sale { font-size:12px; color:var(--text-muted); }
-    .top-product-amount { font-size:13px; font-weight:600; color:var(--text-primary); }
+/* ========== CARDS ========== */
+.card{
+  background:var(--bg-card);
+  border:1px solid rgba(0,212,255,0.1);
+  backdrop-filter:blur(10px);
+  margin-bottom:20px;
+}
+.card:hover{border-color:rgba(0,212,255,0.2);}
+.card-header{
+  padding:14px 20px;
+  border-bottom:1px solid rgba(0,212,255,0.08);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,212,255,0.02);
+}
+.card-title{
+  font-family:var(--font-hud);font-size:12px;font-weight:700;
+  color:var(--text-primary);letter-spacing:2px;text-transform:uppercase;
+}
+.card-title::before{content:'◈ ';}
+.card-body{padding:20px;}
 
-    /* Todo items */
-    .todo-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #f0f4f8; }
-    .todo-item:last-child { border-bottom:none; }
-    .todo-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
-    .todo-icon.orange { background:rgba(232,184,75,0.12); }
-    .todo-icon.blue { background:rgba(30,111,232,0.1); }
-    .todo-icon.red { background:rgba(226,75,74,0.1); }
-    .todo-text { flex:1; font-size:13px; }
-    .todo-count { font-size:14px; font-weight:700; }
-    .todo-count.orange { color:#BA7517; }
-    .todo-count.blue { color:var(--accent); }
-    .todo-count.red { color:var(--danger); }
+/* ========== KPI GRID ========== */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.kpi-card{
+  background:var(--bg-card);
+  border:1px solid rgba(0,212,255,0.1);
+  padding:20px;
+  position:relative;overflow:hidden;
+  transition:all 0.3s;
+}
+.kpi-card:hover{border-color:rgba(0,212,255,0.3);transform:translateY(-2px);box-shadow:0 0 20px rgba(0,212,255,0.1);}
+.kpi-card::before{
+  content:'';position:absolute;
+  bottom:0;left:0;right:0;height:2px;
+  opacity:0;transition:opacity 0.3s;
+}
+.kpi-card:hover::before{opacity:1;}
+.kpi-card.cyan::before{background:linear-gradient(90deg,transparent,var(--neon-cyan),transparent);}
+.kpi-card.green::before{background:linear-gradient(90deg,transparent,var(--neon-green),transparent);}
+.kpi-card.gold::before{background:linear-gradient(90deg,transparent,var(--neon-gold),transparent);}
+.kpi-card.purple::before{background:linear-gradient(90deg,transparent,var(--neon-purple),transparent);}
 
-    /* Settings section */
-    .settings-grid { display:grid; grid-template-columns:240px 1fr; gap:20px; }
-    .settings-nav { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:8px; }
-    .settings-nav-item { padding:10px 14px; border-radius:8px; font-size:13px; cursor:pointer; transition:all 0.2s; }
-    .settings-nav-item:hover { background:var(--bg-page); }
-    .settings-nav-item.active { background:var(--accent-light); color:var(--accent); font-weight:500; }
+.kpi-label{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.kpi-val{font-family:var(--font-hud);font-size:28px;font-weight:900;line-height:1;margin-bottom:6px;}
+.kpi-val.cyan{color:var(--neon-cyan);text-shadow:0 0 12px rgba(0,212,255,0.4);}
+.kpi-val.green{color:var(--neon-green);text-shadow:0 0 12px rgba(0,255,136,0.4);}
+.kpi-val.gold{color:var(--neon-gold);text-shadow:0 0 12px rgba(255,184,0,0.4);}
+.kpi-val.purple{color:var(--neon-purple);text-shadow:0 0 12px rgba(123,47,255,0.4);}
+.kpi-trend{font-family:var(--font-mono);font-size:10px;display:flex;align-items:center;gap:4px;}
+.trend-up{color:var(--neon-green);}
+.trend-dn{color:var(--neon-red);}
+.kpi-chart{height:40px;margin-top:10px;position:relative;}
+.mini-bar-container{display:flex;gap:3px;align-items:flex-end;height:100%;}
+.mini-bar{flex:1;border-radius:0;transition:height 0.5s ease;min-height:4px;}
+.mini-bar.cyan{background:linear-gradient(0deg,rgba(0,212,255,0.2),rgba(0,212,255,0.6));}
+.mini-bar.green{background:linear-gradient(0deg,rgba(0,255,136,0.2),rgba(0,255,136,0.6));}
+.mini-bar.gold{background:linear-gradient(0deg,rgba(255,184,0,0.2),rgba(255,184,0,0.6));}
+.mini-bar.purple{background:linear-gradient(0deg,rgba(123,47,255,0.2),rgba(123,47,255,0.6));}
 
-    /* Tabs */
-    .tabs { display:flex; gap:2px; background:#f0f4f8; border-radius:8px; padding:3px; margin-bottom:20px; }
-    .tab { padding:7px 16px; border-radius:6px; font-size:13px; cursor:pointer; transition:all 0.2s; font-weight:500; color:var(--text-muted); }
-    .tab.active { background:#fff; color:var(--text-primary); box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+/* ========== CHARTS ========== */
+.charts-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;}
+.chart-wrap{height:220px;padding:16px;display:flex;flex-direction:column;gap:12px;}
+canvas.chart-canvas{width:100% !important;flex:1;}
 
-    /* Search/Filter Bar */
-    .filter-bar { display:flex; gap:10px; margin-bottom:16px; align-items:center; }
-    .search-input { flex:1; max-width:280px; border:1px solid var(--border); border-radius:8px; padding:8px 12px; font-size:13px; outline:none; }
-    .search-input:focus { border-color:var(--accent); }
-    .filter-select { border:1px solid var(--border); border-radius:8px; padding:8px 12px; font-size:13px; outline:none; background:#fff; cursor:pointer; }
-    .filter-actions { margin-left:auto; display:flex; gap:8px; }
+/* ========== TABLE ========== */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{
+  padding:10px 14px;
+  font-family:var(--font-mono);font-size:9px;color:var(--text-dim);
+  letter-spacing:2px;text-transform:uppercase;
+  border-bottom:1px solid rgba(0,212,255,0.12);
+  text-align:left;background:rgba(0,212,255,0.02);
+}
+.data-table td{
+  padding:11px 14px;
+  font-size:13px;color:var(--text-secondary);
+  border-bottom:1px solid rgba(0,212,255,0.05);
+  transition:background 0.2s;
+}
+.data-table tr:hover td{background:rgba(0,212,255,0.03);}
+.data-table td:first-child{font-family:var(--font-mono);font-size:11px;color:var(--neon-cyan);letter-spacing:0.5px;}
 
-    /* Chart mini bars (revenue) */
-    .mini-chart { display:flex; align-items:flex-end; gap:3px; height:40px; }
-    .mini-bar { flex:1; background:var(--accent); border-radius:2px 2px 0 0; opacity:0.7; }
+/* STATUS BADGES */
+.badge{
+  display:inline-block;padding:2px 10px;
+  font-family:var(--font-mono);font-size:8px;letter-spacing:1px;font-weight:700;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+}
+.badge-success{background:rgba(0,255,136,0.1);color:var(--neon-green);border:1px solid rgba(0,255,136,0.2);}
+.badge-warning{background:rgba(255,184,0,0.1);color:var(--neon-gold);border:1px solid rgba(255,184,0,0.2);}
+.badge-danger{background:rgba(255,69,69,0.1);color:var(--neon-red);border:1px solid rgba(255,69,69,0.2);}
+.badge-info{background:rgba(0,212,255,0.1);color:var(--neon-cyan);border:1px solid rgba(0,212,255,0.2);}
+.badge-purple{background:rgba(123,47,255,0.1);color:var(--neon-purple);border:1px solid rgba(123,47,255,0.2);}
 
-    /* Progress */
-    .progress { height:6px; background:#f0f4f8; border-radius:3px; overflow:hidden; }
-    .progress-bar { height:100%; border-radius:3px; background:var(--accent); }
-    .progress-bar.success { background:var(--success); }
-    .progress-bar.warning { background:var(--warning); }
-    .progress-bar.danger { background:var(--danger); }
+/* ACTION LINKS */
+.action-link{
+  color:var(--neon-cyan);font-family:var(--font-mono);font-size:10px;
+  cursor:pointer;transition:all 0.2s;letter-spacing:1px;
+  background:none;border:none;padding:3px 8px;
+  border:1px solid rgba(0,212,255,0.15);
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+}
+.action-link:hover{background:rgba(0,212,255,0.1);box-shadow:0 0 8px rgba(0,212,255,0.2);}
+.action-link.danger{color:var(--neon-red);border-color:rgba(255,69,69,0.2);}
+.action-link.danger:hover{background:rgba(255,69,69,0.08);}
 
-    /* Inventory warning */
-    .inventory-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #f0f4f8; }
-    .inventory-row:last-child { border-bottom:none; }
-    .inv-name { flex:1; font-size:13px; }
-    .inv-stock { font-size:13px; font-weight:600; }
-    .inv-stock.low { color:var(--danger); }
-    .inv-stock.ok { color:var(--success); }
+/* BUTTONS */
+.btn-primary{
+  height:34px;padding:0 18px;
+  background:linear-gradient(135deg,rgba(0,102,255,0.3),rgba(0,212,255,0.2));
+  border:1px solid var(--neon-cyan);color:var(--neon-cyan);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:1px;
+  cursor:pointer;transition:all 0.3s;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+.btn-primary:hover{background:rgba(0,212,255,0.2);box-shadow:0 0 15px rgba(0,212,255,0.3);}
+.btn-success{
+  height:34px;padding:0 18px;
+  background:rgba(0,255,136,0.08);
+  border:1px solid rgba(0,255,136,0.3);color:var(--neon-green);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:1px;
+  cursor:pointer;transition:all 0.3s;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+.btn-success:hover{background:rgba(0,255,136,0.15);}
+.btn-danger{
+  height:34px;padding:0 18px;
+  background:rgba(255,69,69,0.08);
+  border:1px solid rgba(255,69,69,0.3);color:var(--neon-red);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:1px;
+  cursor:pointer;transition:all 0.3s;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
 
-    /* Mobile responsive */
-    @media(max-width:1024px) { .metrics-grid { grid-template-columns:repeat(2,1fr); } }
-    @media(max-width:768px) { .sidebar { width:60px; } .nav-item span, .sidebar-section, .logo-text, .nav-badge { display:none; } .sidebar-logo { padding:12px; justify-content:center; } }
-  </style>
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid rgba(0,212,255,0.1);padding-bottom:0;}
+.tab{
+  padding:8px 18px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:1px;
+  color:var(--text-dim);cursor:pointer;transition:all 0.25s;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+}
+.tab:hover{color:var(--neon-cyan);}
+.tab.active{color:var(--neon-cyan);border-bottom-color:var(--neon-cyan);}
+
+/* SEARCH + FILTER BAR */
+.filter-bar{
+  display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;
+}
+.search-input-sm{
+  flex:1;min-width:160px;height:32px;
+  background:rgba(0,212,255,0.04);
+  border:1px solid rgba(0,212,255,0.15);
+  color:var(--text-primary);
+  font-family:var(--font-mono);font-size:11px;padding:0 12px;
+  outline:none;letter-spacing:0.5px;
+}
+.search-input-sm:focus{border-color:rgba(0,212,255,0.4);box-shadow:0 0 8px rgba(0,212,255,0.1);}
+.select-sm{
+  height:32px;padding:0 10px;
+  background:rgba(0,212,255,0.04);
+  border:1px solid rgba(0,212,255,0.15);
+  color:var(--text-secondary);
+  font-family:var(--font-mono);font-size:10px;
+  cursor:pointer;outline:none;
+}
+.select-sm option{background:var(--bg-deep);color:var(--text-primary);}
+
+/* STOCK INDICATOR */
+.stock-bar{height:4px;background:rgba(0,212,255,0.1);margin-top:4px;}
+.stock-fill{height:100%;transition:width 0.5s;}
+.stock-high{background:var(--neon-green);}
+.stock-mid{background:var(--neon-gold);}
+.stock-low{background:var(--neon-red);box-shadow:0 0 4px var(--neon-red);}
+
+/* SETTINGS LAYOUT */
+.settings-layout{display:grid;grid-template-columns:180px 1fr;gap:20px;}
+.settings-nav-list{
+  background:var(--bg-card);
+  border:1px solid rgba(0,212,255,0.1);
+  overflow:hidden;
+}
+.settings-nav-item{
+  padding:12px 16px;
+  font-family:var(--font-mono);font-size:11px;color:var(--text-dim);
+  cursor:pointer;transition:all 0.25s;
+  letter-spacing:0.5px;
+  border-bottom:1px solid rgba(0,212,255,0.05);
+  position:relative;
+}
+.settings-nav-item:hover{color:var(--neon-cyan);background:rgba(0,212,255,0.04);}
+.settings-nav-item.active{color:var(--neon-cyan);background:rgba(0,212,255,0.06);}
+.settings-nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--neon-cyan);}
+.form-group{margin-bottom:20px;}
+.form-label{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;display:block;}
+.form-input{
+  width:100%;height:38px;padding:0 14px;
+  background:rgba(0,212,255,0.03);
+  border:1px solid rgba(0,212,255,0.15);
+  color:var(--text-primary);
+  font-family:var(--font-mono);font-size:12px;
+  outline:none;letter-spacing:0.5px;transition:border-color 0.2s;
+}
+.form-input:focus{border-color:rgba(0,212,255,0.4);box-shadow:0 0 8px rgba(0,212,255,0.1);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* MARKETING CARDS */
+.promo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.promo-card{
+  background:var(--bg-card);border:1px solid rgba(0,212,255,0.1);
+  padding:20px;transition:all 0.3s;cursor:pointer;
+}
+.promo-card:hover{border-color:rgba(0,212,255,0.3);transform:translateY(-2px);}
+.promo-icon{font-size:28px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(0,212,255,0.3));}
+.promo-name{font-family:var(--font-hud);font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:4px;}
+.promo-desc{font-size:12px;color:var(--text-dim);line-height:1.6;}
+.promo-status{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid rgba(0,212,255,0.08);}
+
+/* TOGGLE SWITCH */
+.toggle{
+  width:40px;height:20px;background:rgba(0,212,255,0.1);
+  border:1px solid rgba(0,212,255,0.2);
+  border-radius:10px;cursor:pointer;position:relative;transition:all 0.3s;
+}
+.toggle.on{background:rgba(0,212,255,0.2);border-color:var(--neon-cyan);box-shadow:0 0 8px rgba(0,212,255,0.3);}
+.toggle-dot{
+  width:14px;height:14px;background:var(--text-dim);
+  border-radius:50%;position:absolute;top:2px;left:2px;transition:all 0.3s;
+}
+.toggle.on .toggle-dot{left:22px;background:var(--neon-cyan);box-shadow:0 0 6px var(--neon-cyan);}
+
+/* LOGISTICS TRACKER */
+.logistics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.logistics-card{background:var(--bg-card);border:1px solid rgba(0,212,255,0.1);padding:20px;}
+.logistics-name{font-family:var(--font-hud);font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:8px;}
+.logistics-rate{font-family:var(--font-mono);font-size:11px;margin-bottom:8px;}
+.rate-val{color:var(--neon-cyan);font-size:18px;font-weight:700;}
+.logistics-regions{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.region-tag{padding:2px 8px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.12);font-family:var(--font-mono);font-size:8px;color:var(--text-dim);letter-spacing:1px;}
+
+/* TOAST */
+.admin-toast{
+  position:fixed;top:60px;right:24px;
+  background:rgba(6,15,30,0.97);
+  color:var(--neon-cyan);
+  border:1px solid rgba(0,212,255,0.4);
+  padding:10px 20px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:1px;
+  z-index:9999;
+  box-shadow:0 0 20px rgba(0,212,255,0.2);
+  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  animation:toastIn 0.3s ease;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:rgba(0,212,255,0.02);}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.2);border-radius:2px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,212,255,0.4);}
+
+/* AFTERSALE */
+.ticket-grid{display:grid;gap:12px;}
+.ticket-card{
+  background:var(--bg-card);border:1px solid rgba(0,212,255,0.1);
+  padding:16px 20px;display:flex;align-items:center;gap:16px;
+  transition:all 0.3s;cursor:pointer;
+}
+.ticket-card:hover{border-color:rgba(0,212,255,0.3);}
+.ticket-id{font-family:var(--font-mono);font-size:11px;color:var(--neon-cyan);min-width:100px;letter-spacing:1px;}
+.ticket-info{flex:1;}
+.ticket-title{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:3px;}
+.ticket-meta{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:0.5px;}
+.priority-high{color:var(--neon-red);}
+.priority-mid{color:var(--neon-gold);}
+.priority-low{color:var(--neon-green);}
+
+/* I18N */
+.i18n-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.lang-card{background:var(--bg-card);border:1px solid rgba(0,212,255,0.1);padding:20px;}
+.lang-flag{font-size:28px;margin-bottom:8px;}
+.lang-name{font-family:var(--font-hud);font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px;}
+.lang-status{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;}
+.lang-progress{height:4px;background:rgba(0,212,255,0.1);margin:10px 0;border-radius:0;}
+.lang-progress-bar{height:100%;background:linear-gradient(90deg,var(--neon-blue),var(--neon-cyan));}
+</style>
 </head>
 <body>
-<div class="admin-layout">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-mark">JS</div>
-      <div class="logo-text">集数科技<div class="logo-sub">后台管理系统</div></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon-sm">JS</div>
+    <div class="logo-text-sm">
+      <div class="main">JISHU</div>
+      <div class="sub">ADMIN v3.14</div>
+    </div>
+  </div>
+  <div class="sidebar-sys">
+    <div class="sys-label">// SYSTEM STATUS</div>
+    <div class="sys-val">⬤ ALL SYSTEMS NOMINAL</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group-label">// OVERVIEW</div>
+    <div class="nav-item active" onclick="switchSection('dashboard',this)">
+      <span class="nav-icon">📊</span>数据看板
     </div>
 
-    <div class="sidebar-section">核心功能</div>
-    <div class="nav-item active" onclick="switchSection('dashboard',this)">
-      <span class="nav-icon">📊</span>
-      <span>数据看板</span>
-    </div>
+    <div class="nav-group-label">// OPERATIONS</div>
     <div class="nav-item" onclick="switchSection('orders',this)">
-      <span class="nav-icon">📦</span>
-      <span>订单管理</span>
+      <span class="nav-icon">📦</span>订单管理
       <span class="nav-badge">12</span>
     </div>
     <div class="nav-item" onclick="switchSection('products',this)">
-      <span class="nav-icon">🖥️</span>
-      <span>商品管理</span>
+      <span class="nav-icon">🖥️</span>商品管理
     </div>
     <div class="nav-item" onclick="switchSection('users',this)">
-      <span class="nav-icon">👥</span>
-      <span>用户管理</span>
+      <span class="nav-icon">👥</span>用户管理
     </div>
 
-    <div class="sidebar-section">运营营销</div>
+    <div class="nav-group-label">// MARKETING</div>
     <div class="nav-item" onclick="switchSection('marketing',this)">
-      <span class="nav-icon">🎫</span>
-      <span>营销管理</span>
-      <span class="nav-badge gold">3</span>
+      <span class="nav-icon">🎯</span>营销管理
     </div>
     <div class="nav-item" onclick="switchSection('content',this)">
-      <span class="nav-icon">🎨</span>
-      <span>内容装修</span>
-    </div>
-    <div class="nav-item" onclick="switchSection('aftersale',this)">
-      <span class="nav-icon">🔧</span>
-      <span>售后管理</span>
-      <span class="nav-badge">5</span>
+      <span class="nav-icon">🎨</span>内容装修
     </div>
 
-    <div class="sidebar-section">系统</div>
-    <div class="nav-item" onclick="switchSection('logistics',this)">
-      <span class="nav-icon">🚚</span>
-      <span>物流配置</span>
+    <div class="nav-group-label">// FULFILLMENT</div>
+    <div class="nav-item" onclick="switchSection('aftersale',this)">
+      <span class="nav-icon">🛠️</span>售后管理
+      <span class="nav-badge" style="background:var(--neon-red);color:#fff;">5</span>
     </div>
+    <div class="nav-item" onclick="switchSection('logistics',this)">
+      <span class="nav-icon">🌐</span>物流配置
+    </div>
+
+    <div class="nav-group-label">// CONFIG</div>
     <div class="nav-item" onclick="switchSection('i18n',this)">
-      <span class="nav-icon">🌐</span>
-      <span>双语管理</span>
+      <span class="nav-icon">🌏</span>双语管理
     </div>
     <div class="nav-item" onclick="switchSection('settings',this)">
-      <span class="nav-icon">⚙️</span>
-      <span>系统设置</span>
+      <span class="nav-icon">⚙️</span>系统设置
     </div>
 
-    <div style="margin-top:auto;padding:16px;">
-      <div class="nav-item" style="background:rgba(255,255,255,0.05);border-radius:8px;padding:10px 12px;" onclick="window.location.href='index.html'">
-        <span class="nav-icon">🌐</span>
-        <span>查看前台</span>
+    <div style="margin-top:auto;padding-top:12px;">
+      <div class="nav-item" onclick="window.location.href='index.html'" style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);">
+        <span class="nav-icon">↗</span>查看前台
       </div>
     </div>
-  </aside>
-
-  <!-- Main -->
-  <div class="main">
-    <!-- Header -->
-    <header class="admin-header">
-      <div class="header-left">
-        <div class="breadcrumb">
-          <span>集数商城后台</span>
-          <span>/</span>
-          <span class="current" id="breadcrumbCurrent">数据看板</span>
-        </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar">👑</div>
+      <div class="user-info">
+        <div class="name">JISHU Admin</div>
+        <div class="role">SUPER ADMIN</div>
       </div>
-      <div class="header-right">
-        <button class="header-btn notification-dot" title="消息通知">🔔</button>
-        <button class="header-btn" title="帮助">❓</button>
-        <div class="admin-user">
-          <div class="user-avatar">管</div>
-          <div>
-            <div class="user-name">超级管理员</div>
-            <div class="user-role">Administrator</div>
-          </div>
-          <span style="color:#718096;font-size:12px;">▾</span>
-        </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">
+        JISHU <span class="sep">//</span> <span class="current" id="breadcrumbCurrent">数据看板</span>
       </div>
-    </header>
+    </div>
+    <div class="topbar-right">
+      <div class="top-stat"><span class="label">API</span><span class="val" style="color:var(--neon-green);">ONLINE</span></div>
+      <div class="top-stat"><span class="label">TIME</span><span class="val" id="adminClock">--:--</span></div>
+      <button class="btn-top" onclick="showToast('数据刷新完成 ✅')">↺ 刷新</button>
+      <button class="btn-top" onclick="showToast('报表生成中... 📥')">⬇ 导出</button>
+    </div>
+  </div>
 
-    <!-- Content -->
-    <div class="content">
+  <div class="content">
 
-      <!-- ========== DASHBOARD ========== -->
-      <div class="page-section active" id="dashboard">
-        <div class="page-title">
-          <div class="page-title-text">📊 <span>实时数据看板</span></div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <span style="font-size:12px;color:#718096;">更新时间：2026-05-29 05:16</span>
-            <button class="btn btn-outline btn-sm">🔄 刷新数据</button>
-            <button class="btn btn-primary btn-sm">📤 导出报表</button>
+    <!-- ============ DASHBOARD ============ -->
+    <div class="page-section active" id="dashboard">
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card cyan">
+          <div class="kpi-label">今日营收 / TODAY REVENUE</div>
+          <div class="kpi-val cyan">¥284,650</div>
+          <div class="kpi-trend trend-up">▲ +18.4% 较昨日</div>
+          <div class="kpi-chart">
+            <div class="mini-bar-container" id="chart-rev"></div>
           </div>
         </div>
-
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-label">今日销售额 <span class="metric-icon">💰</span></div>
-            <div class="metric-value" style="color:var(--danger);">¥128,490</div>
-            <div class="metric-change change-up">↑ 23.5% <span style="color:var(--text-muted);">环比昨日</span></div>
-            <div class="mini-chart" style="margin-top:8px;">
-              <div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:45%"></div>
-              <div class="mini-bar" style="height:70%"></div><div class="mini-bar" style="height:55%"></div>
-              <div class="mini-bar" style="height:85%"></div><div class="mini-bar" style="height:100%;background:var(--danger);"></div>
-            </div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">今日订单数 <span class="metric-icon">📦</span></div>
-            <div class="metric-value" style="color:var(--accent);">286</div>
-            <div class="metric-change change-up">↑ 18.2% <span style="color:var(--text-muted);">环比昨日</span></div>
-            <div class="mini-chart" style="margin-top:8px;">
-              <div class="mini-bar" style="height:50%"></div><div class="mini-bar" style="height:65%"></div>
-              <div class="mini-bar" style="height:55%"></div><div class="mini-bar" style="height:80%"></div>
-              <div class="mini-bar" style="height:75%"></div><div class="mini-bar" style="height:100%;background:var(--accent);"></div>
-            </div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">今日访客数 <span class="metric-icon">👥</span></div>
-            <div class="metric-value" style="color:var(--success);">8,934</div>
-            <div class="metric-change change-up">↑ 11.8% <span style="color:var(--text-muted);">环比昨日</span></div>
-            <div class="mini-chart" style="margin-top:8px;">
-              <div class="mini-bar" style="height:70%;background:var(--success);"></div><div class="mini-bar" style="height:85%;background:var(--success);"></div>
-              <div class="mini-bar" style="height:60%;background:var(--success);"></div><div class="mini-bar" style="height:90%;background:var(--success);"></div>
-              <div class="mini-bar" style="height:75%;background:var(--success);"></div><div class="mini-bar" style="height:100%;background:var(--success);"></div>
-            </div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">本月累计销售额 <span class="metric-icon">📈</span></div>
-            <div class="metric-value">¥2,384,920</div>
-            <div class="metric-change change-up">↑ 34.7% <span style="color:var(--text-muted);">环比上月</span></div>
-            <div class="mini-chart" style="margin-top:8px;">
-              <div class="mini-bar" style="height:40%;background:var(--gold);"></div><div class="mini-bar" style="height:55%;background:var(--gold);"></div>
-              <div class="mini-bar" style="height:70%;background:var(--gold);"></div><div class="mini-bar" style="height:60%;background:var(--gold);"></div>
-              <div class="mini-bar" style="height:85%;background:var(--gold);"></div><div class="mini-bar" style="height:100%;background:var(--gold);"></div>
-            </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">今日订单 / TODAY ORDERS</div>
+          <div class="kpi-val green">1,247</div>
+          <div class="kpi-trend trend-up">▲ +12.1% 较昨日</div>
+          <div class="kpi-chart">
+            <div class="mini-bar-container" id="chart-ord"></div>
           </div>
         </div>
-
-        <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;">
-          <!-- Sales Chart -->
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">近7日销售趋势</span>
-              <div style="display:flex;gap:6px;">
-                <button class="btn btn-outline btn-sm">日</button>
-                <button class="btn btn-primary btn-sm">周</button>
-                <button class="btn btn-outline btn-sm">月</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="chart-placeholder" style="background:none;border:1px solid var(--border);border-radius:8px;">
-                <div class="chart-bars">
-                  <div class="chart-bar" style="height:60%" data-val="8.6w"></div>
-                  <div class="chart-bar" style="height:45%" data-val="6.4w"></div>
-                  <div class="chart-bar" style="height:80%" data-val="11.4w"></div>
-                  <div class="chart-bar" style="height:55%" data-val="7.8w"></div>
-                  <div class="chart-bar" style="height:90%" data-val="12.8w"></div>
-                  <div class="chart-bar" style="height:70%" data-val="9.9w"></div>
-                  <div class="chart-bar" style="height:100%;background:var(--danger);" data-val="14.2w"></div>
-                </div>
-                <div class="chart-labels">
-                  <div class="chart-label">周一</div><div class="chart-label">周二</div><div class="chart-label">周三</div>
-                  <div class="chart-label">周四</div><div class="chart-label">周五</div><div class="chart-label">周六</div><div class="chart-label">今日</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Todo -->
-          <div class="card">
-            <div class="card-header"><span class="card-title">待办事项</span></div>
-            <div class="card-body" style="padding:12px 20px;">
-              <div class="todo-item">
-                <div class="todo-icon orange">📦</div>
-                <div class="todo-text">待发货订单</div>
-                <div class="todo-count orange">12</div>
-              </div>
-              <div class="todo-item">
-                <div class="todo-icon red">🔄</div>
-                <div class="todo-text">售后申请待处理</div>
-                <div class="todo-count red">5</div>
-              </div>
-              <div class="todo-item">
-                <div class="todo-icon orange">⚠️</div>
-                <div class="todo-text">库存紧张商品</div>
-                <div class="todo-count orange">8</div>
-              </div>
-              <div class="todo-item">
-                <div class="todo-icon blue">💬</div>
-                <div class="todo-text">用户评价未回复</div>
-                <div class="todo-count blue">23</div>
-              </div>
-              <div class="todo-item">
-                <div class="todo-icon orange">📋</div>
-                <div class="todo-text">待审核优惠券</div>
-                <div class="todo-count orange">3</div>
-              </div>
-            </div>
+        <div class="kpi-card gold">
+          <div class="kpi-label">月累计用户 / MONTHLY USERS</div>
+          <div class="kpi-val gold">38,920</div>
+          <div class="kpi-trend trend-up">▲ +8.7% 环比</div>
+          <div class="kpi-chart">
+            <div class="mini-bar-container" id="chart-usr"></div>
           </div>
         </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <!-- Top Products -->
-          <div class="card">
-            <div class="card-header"><span class="card-title">热销排行 TOP 5</span><button class="btn btn-outline btn-sm">查看全部</button></div>
-            <div class="card-body" style="padding:8px 20px;">
-              <div class="top-product-row">
-                <div class="top-rank r1">1</div>
-                <div class="thumb-img">🖥️</div>
-                <div style="flex:1;"><div class="top-product-name">X900 Pro 一体机</div><div class="top-product-sale" style="font-size:11px;color:#718096;">月销 328台</div></div>
-                <div class="top-product-amount">¥524,968</div>
-              </div>
-              <div class="top-product-row">
-                <div class="top-rank r2">2</div>
-                <div class="thumb-img">🖳</div>
-                <div style="flex:1;"><div class="top-product-name">BLCOOF M5 Pro 迷你主机</div><div style="font-size:11px;color:#718096;">月销 512台</div></div>
-                <div class="top-product-amount">¥220,064</div>
-              </div>
-              <div class="top-product-row">
-                <div class="top-rank r3">3</div>
-                <div class="thumb-img">🖵</div>
-                <div style="flex:1;"><div class="top-product-name">JISHU J32U 显示器</div><div style="font-size:11px;color:#718096;">月销 445台</div></div>
-                <div class="top-product-amount">¥146,855</div>
-              </div>
-              <div class="top-product-row">
-                <div class="top-rank">4</div>
-                <div class="thumb-img">🖥️</div>
-                <div style="flex:1;"><div class="top-product-name">X700 一体机 i7版</div><div style="font-size:11px;color:#718096;">月销 215台</div></div>
-                <div class="top-product-amount">¥188,985</div>
-              </div>
-              <div class="top-product-row">
-                <div class="top-rank">5</div>
-                <div class="thumb-img">🖨</div>
-                <div style="flex:1;"><div class="top-product-name">工作站旗舰台式机套装</div><div style="font-size:11px;color:#718096;">月销 67套</div></div>
-                <div class="top-product-amount">¥193,560</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Recent Orders -->
-          <div class="card">
-            <div class="card-header"><span class="card-title">最新订单</span><button class="btn btn-primary btn-sm" onclick="switchSection('orders',null)">查看全部</button></div>
-            <div class="card-body" style="padding:0;">
-              <table>
-                <thead><tr><th>订单号</th><th>产品</th><th>金额</th><th>状态</th></tr></thead>
-                <tbody>
-                  <tr><td style="font-size:12px;">#JS20260529001</td><td>X900 Pro</td><td style="font-weight:600;">¥15,999</td><td><span class="status-badge status-paid">已付款</span></td></tr>
-                  <tr><td style="font-size:12px;">#JS20260529002</td><td>M5 Pro × 5</td><td style="font-weight:600;">¥21,495</td><td><span class="status-badge status-shipped">已发货</span></td></tr>
-                  <tr><td style="font-size:12px;">#JS20260529003</td><td>J32U × 10</td><td style="font-weight:600;">¥32,990</td><td><span class="status-badge status-pending">待付款</span></td></tr>
-                  <tr><td style="font-size:12px;">#JS20260529004</td><td>工作站套装</td><td style="font-weight:600;">¥28,800</td><td><span class="status-badge status-paid">已付款</span></td></tr>
-                  <tr><td style="font-size:12px;">#JS20260529005</td><td>X700 × 3</td><td style="font-weight:600;">¥26,997</td><td><span class="status-badge status-shipped">已发货</span></td></tr>
-                </tbody>
-              </table>
-            </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">待处理工单 / PENDING TICKETS</div>
+          <div class="kpi-val purple">23</div>
+          <div class="kpi-trend trend-dn">▼ -5 较昨日</div>
+          <div class="kpi-chart">
+            <div class="mini-bar-container" id="chart-tkt"></div>
           </div>
         </div>
       </div>
 
-      <!-- ========== ORDERS ========== -->
-      <div class="page-section" id="orders">
-        <div class="page-title">
-          <div class="page-title-text">📦 <span>订单管理</span></div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline btn-sm">📤 批量导出</button>
-            <button class="btn btn-primary btn-sm">✏️ 手动建单</button>
-          </div>
-        </div>
-
-        <div class="tabs">
-          <div class="tab active" onclick="switchTab(this,'tab-orders')">全部订单 (286)</div>
-          <div class="tab" onclick="switchTab(this,'tab-orders')">待付款 (18)</div>
-          <div class="tab" onclick="switchTab(this,'tab-orders')">待发货 (12)</div>
-          <div class="tab" onclick="switchTab(this,'tab-orders')">已发货 (203)</div>
-          <div class="tab" onclick="switchTab(this,'tab-orders')">已完成 (47)</div>
-          <div class="tab" onclick="switchTab(this,'tab-orders')">退款售后 (5)</div>
-        </div>
-
+      <!-- Charts -->
+      <div class="charts-grid">
         <div class="card">
           <div class="card-header">
-            <div class="filter-bar" style="margin:0;width:100%;">
-              <input class="search-input" placeholder="搜索订单号、买家、产品...">
-              <select class="filter-select"><option>全部状态</option><option>待付款</option><option>待发货</option><option>已发货</option></select>
-              <select class="filter-select"><option>全部产品</option><option>一体机</option><option>迷你主机</option><option>显示器</option><option>台式机</option></select>
-              <select class="filter-select"><option>全部来源</option><option>国内</option><option>海外</option></select>
-              <div class="filter-actions">
-                <button class="btn btn-primary btn-sm">🔍 搜索</button>
-                <button class="btn btn-success btn-sm">📦 批量发货</button>
-              </div>
-            </div>
-          </div>
-          <div class="card-body" style="padding:0;">
-            <table>
-              <thead>
-                <tr>
-                  <th><input type="checkbox"></th>
-                  <th>订单号</th>
-                  <th>买家</th>
-                  <th>产品</th>
-                  <th>金额</th>
-                  <th>状态</th>
-                  <th>时间</th>
-                  <th>来源</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td style="font-size:12px;">#JS20260529001</td>
-                  <td>王 ** 总</td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖥️</div><div><div class="thumb-name">X900 Pro 一体机</div><div class="thumb-sku">i9/32G/2T</div></div></div></td>
-                  <td style="font-weight:600;color:var(--danger);">¥15,999</td>
-                  <td><span class="status-badge status-paid">已付款</span></td>
-                  <td style="font-size:12px;">05-29 05:12</td>
-                  <td><span style="font-size:11px;background:#e8f4fd;color:var(--accent);padding:2px 6px;border-radius:4px;">国内</span></td>
-                  <td>
-                    <span class="action-link">发货</span>
-                    <span class="action-link">详情</span>
-                    <span class="action-link danger">取消</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td style="font-size:12px;">#JS20260529002</td>
-                  <td>Michael C.</td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖳</div><div><div class="thumb-name">BLCOOF M5 Pro × 5</div><div class="thumb-sku">i7/16G/1T</div></div></div></td>
-                  <td style="font-weight:600;color:var(--danger);">¥21,495</td>
-                  <td><span class="status-badge status-shipped">已发货</span></td>
-                  <td style="font-size:12px;">05-29 04:38</td>
-                  <td><span style="font-size:11px;background:#f0fdf4;color:var(--success);padding:2px 6px;border-radius:4px;">海外</span></td>
-                  <td>
-                    <span class="action-link">追踪</span>
-                    <span class="action-link">详情</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td style="font-size:12px;">#JS20260529003</td>
-                  <td>李 ** 师</td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖵</div><div><div class="thumb-name">JISHU J32U 显示器 × 10</div><div class="thumb-sku">4K/120Hz</div></div></div></td>
-                  <td style="font-weight:600;color:var(--danger);">¥32,990</td>
-                  <td><span class="status-badge status-pending">待付款</span></td>
-                  <td style="font-size:12px;">05-29 03:55</td>
-                  <td><span style="font-size:11px;background:#e8f4fd;color:var(--accent);padding:2px 6px;border-radius:4px;">国内</span></td>
-                  <td>
-                    <span class="action-link">催付</span>
-                    <span class="action-link">详情</span>
-                    <span class="action-link danger">取消</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td style="font-size:12px;">#JS20260528098</td>
-                  <td>张 ** 理</td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖥️</div><div><div class="thumb-name">工作站旗舰套装</div><div class="thumb-sku">Xeon/64G/4T</div></div></div></td>
-                  <td style="font-weight:600;color:var(--danger);">¥28,800</td>
-                  <td><span class="status-badge status-paid">已付款</span></td>
-                  <td style="font-size:12px;">05-28 18:22</td>
-                  <td><span style="font-size:11px;background:#e8f4fd;color:var(--accent);padding:2px 6px;border-radius:4px;">国内</span></td>
-                  <td>
-                    <span class="action-link">发货</span>
-                    <span class="action-link">详情</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:13px;color:var(--text-muted);">共 286 条记录</span>
-            <div style="display:flex;gap:6px;">
-              <button class="btn btn-outline btn-sm">上一页</button>
-              <button class="btn btn-primary btn-sm">1</button>
-              <button class="btn btn-outline btn-sm">2</button>
-              <button class="btn btn-outline btn-sm">3</button>
-              <button class="btn btn-outline btn-sm">下一页</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== PRODUCTS ========== -->
-      <div class="page-section" id="products">
-        <div class="page-title">
-          <div class="page-title-text">🖥️ <span>商品管理</span></div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline btn-sm">📥 批量导入</button>
-            <button class="btn btn-outline btn-sm">📤 批量导出</button>
-            <button class="btn btn-primary btn-sm">➕ 新增商品</button>
-          </div>
-        </div>
-
-        <div class="filter-bar">
-          <input class="search-input" placeholder="搜索商品名称、SKU、型号...">
-          <select class="filter-select"><option>全部分类</option><option>一体机</option><option>迷你主机</option><option>显示器</option><option>台式机</option></select>
-          <select class="filter-select"><option>全部品牌</option><option>JISHU</option><option>BLCOOF</option></select>
-          <select class="filter-select"><option>全部状态</option><option>已上架</option><option>已下架</option><option>库存预警</option></select>
-          <div class="filter-actions">
-            <button class="btn btn-primary btn-sm">🔍 筛选</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-body" style="padding:0;">
-            <table>
-              <thead>
-                <tr>
-                  <th><input type="checkbox"></th>
-                  <th>商品</th>
-                  <th>品牌</th>
-                  <th>分类</th>
-                  <th>价格</th>
-                  <th>库存</th>
-                  <th>月销量</th>
-                  <th>状态</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖥️</div><div><div class="thumb-name">X900 Pro 一体机</div><div class="thumb-sku">SKU: JS-X900P-i9-27</div></div></div></td>
-                  <td>JISHU</td>
-                  <td>一体机</td>
-                  <td>¥15,999</td>
-                  <td><span style="color:var(--success);font-weight:600;">128</span></td>
-                  <td>328</td>
-                  <td><span class="status-badge status-onshelf">已上架</span></td>
-                  <td><span class="action-link">编辑</span><span class="action-link">详情</span><span class="action-link danger">下架</span></td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖳</div><div><div class="thumb-name">BLCOOF M5 Pro 迷你主机</div><div class="thumb-sku">SKU: BC-M5P-i7-16</div></div></div></td>
-                  <td>BLCOOF</td>
-                  <td>迷你主机</td>
-                  <td>¥4,299</td>
-                  <td><span style="color:var(--warning);font-weight:600;">23</span> ⚠️</td>
-                  <td>512</td>
-                  <td><span class="status-badge status-onshelf">已上架</span></td>
-                  <td><span class="action-link">编辑</span><span class="action-link">补货</span><span class="action-link danger">下架</span></td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖵</div><div><div class="thumb-name">JISHU J32U 商用显示器</div><div class="thumb-sku">SKU: JS-J32U-4K</div></div></div></td>
-                  <td>JISHU</td>
-                  <td>显示器</td>
-                  <td>¥3,299</td>
-                  <td><span style="color:var(--success);font-weight:600;">86</span></td>
-                  <td>445</td>
-                  <td><span class="status-badge status-onshelf">已上架</span></td>
-                  <td><span class="action-link">编辑</span><span class="action-link">详情</span><span class="action-link danger">下架</span></td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖥️</div><div><div class="thumb-name">X700 一体机 i7版</div><div class="thumb-sku">SKU: JS-X700-i7-24</div></div></div></td>
-                  <td>JISHU</td>
-                  <td>一体机</td>
-                  <td>¥8,999</td>
-                  <td><span style="color:var(--danger);font-weight:600;">8</span> 🔴</td>
-                  <td>215</td>
-                  <td><span class="status-badge status-onshelf">已上架</span></td>
-                  <td><span class="action-link">编辑</span><span class="action-link">补货</span><span class="action-link danger">下架</span></td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖨</div><div><div class="thumb-name">工作站旗舰台式机套装</div><div class="thumb-sku">SKU: JS-WS-XEON-64</div></div></div></td>
-                  <td>JISHU</td>
-                  <td>台式机</td>
-                  <td>¥28,800</td>
-                  <td><span style="color:var(--success);font-weight:600;">34</span></td>
-                  <td>67</td>
-                  <td><span class="status-badge status-onshelf">已上架</span></td>
-                  <td><span class="action-link">编辑</span><span class="action-link">详情</span><span class="action-link danger">下架</span></td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td><div class="product-thumb"><div class="thumb-img">🖳</div><div><div class="thumb-name">BLCOOF N1 入门迷你主机</div><div class="thumb-sku">SKU: BC-N1-i5-8</div></div></div></td>
-                  <td>BLCOOF</td>
-                  <td>迷你主机</td>
-                  <td>¥1,299</td>
-                  <td><span style="color:var(--text-muted);font-weight:600;">0</span></td>
-                  <td>0</td>
-                  <td><span class="status-badge status-offshelf">已下架</span></td>
-                  <td><span class="action-link">编辑</span><span class="action-link">补货上架</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+            <div class="card-title">近7日销售趋势</div>
             <div style="display:flex;gap:8px;">
-              <button class="btn btn-outline btn-sm">批量上架</button>
-              <button class="btn btn-outline btn-sm">批量下架</button>
-              <button class="btn btn-outline btn-sm">批量改价</button>
+              <span class="badge badge-info">营收</span>
+              <span class="badge badge-success">订单</span>
             </div>
-            <span style="font-size:13px;color:var(--text-muted);">共 160 款商品</span>
           </div>
-        </div>
-      </div>
-
-      <!-- ========== USERS ========== -->
-      <div class="page-section" id="users">
-        <div class="page-title">
-          <div class="page-title-text">👥 <span>用户管理</span></div>
-          <button class="btn btn-outline btn-sm">📤 导出用户</button>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
-          <div class="metric-card"><div class="metric-label">总用户数</div><div class="metric-value" style="color:var(--accent);">50,284</div><div class="metric-change change-up">↑ 128 今日新增</div></div>
-          <div class="metric-card"><div class="metric-label">VIP会员</div><div class="metric-value" style="color:var(--gold);">3,821</div><div class="metric-change change-up">↑ 黄金会员</div></div>
-          <div class="metric-card"><div class="metric-label">海外用户</div><div class="metric-value" style="color:var(--success);">12,438</div><div class="metric-change">35个国家</div></div>
-          <div class="metric-card"><div class="metric-label">今日活跃</div><div class="metric-value">8,934</div><div class="metric-change change-up">↑ 11.8%</div></div>
+          <div class="chart-wrap">
+            <canvas id="revenueChart" class="chart-canvas"></canvas>
+          </div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-title">用户列表</span>
-            <div style="display:flex;gap:6px;">
-              <input class="search-input" style="max-width:200px;" placeholder="搜索用户名/邮箱...">
-              <select class="filter-select"><option>全部等级</option><option>普通用户</option><option>银牌会员</option><option>金牌会员</option><option>钻石会员</option></select>
-            </div>
+          <div class="card-header">
+            <div class="card-title">产品分类占比</div>
           </div>
-          <div class="card-body" style="padding:0;">
-            <table>
-              <thead><tr><th>用户</th><th>注册时间</th><th>累计消费</th><th>订单数</th><th>积分</th><th>等级</th><th>地区</th><th>操作</th></tr></thead>
-              <tbody>
-                <tr>
-                  <td><div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#534AB7);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;">王</div><div><div style="font-size:13px;font-weight:500;">王**总</div><div style="font-size:11px;color:#718096;">wang**@corp.com</div></div></div></td>
-                  <td style="font-size:12px;">2024-03-15</td>
-                  <td style="font-weight:600;color:var(--danger);">¥284,920</td>
-                  <td>38</td>
-                  <td style="color:var(--gold);">28,492</td>
-                  <td><span style="background:rgba(198,151,63,0.15);color:var(--gold);font-size:11px;padding:2px 8px;border-radius:10px;">💎钻石</span></td>
-                  <td>🇨🇳 北京</td>
-                  <td><span class="action-link">详情</span><span class="action-link">消费记录</span></td>
-                </tr>
-                <tr>
-                  <td><div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--success),#3B6D11);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;">M</div><div><div style="font-size:13px;font-weight:500;">Michael C.</div><div style="font-size:11px;color:#718096;">michael@tech.us</div></div></div></td>
-                  <td style="font-size:12px;">2024-06-22</td>
-                  <td style="font-weight:600;color:var(--danger);">¥145,650</td>
-                  <td>22</td>
-                  <td style="color:var(--gold);">14,565</td>
-                  <td><span style="background:rgba(198,151,63,0.1);color:var(--gold);font-size:11px;padding:2px 8px;border-radius:10px;">🥇金牌</span></td>
-                  <td>🇺🇸 San Francisco</td>
-                  <td><span class="action-link">详情</span><span class="action-link">消费记录</span></td>
-                </tr>
-                <tr>
-                  <td><div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#E8B84B);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;">李</div><div><div style="font-size:13px;font-weight:500;">李设计师</div><div style="font-size:11px;color:#718096;">li**@design.cn</div></div></div></td>
-                  <td style="font-size:12px;">2025-01-08</td>
-                  <td style="font-weight:600;color:var(--danger);">¥18,400</td>
-                  <td>5</td>
-                  <td style="color:var(--accent);">1,840</td>
-                  <td><span style="background:rgba(113,128,150,0.12);color:var(--text-muted);font-size:11px;padding:2px 8px;border-radius:10px;">🥈银牌</span></td>
-                  <td>🇨🇳 深圳</td>
-                  <td><span class="action-link">详情</span><span class="action-link">消费记录</span></td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="chart-wrap">
+            <canvas id="categoryChart" class="chart-canvas"></canvas>
           </div>
         </div>
       </div>
 
-      <!-- ========== MARKETING ========== -->
-      <div class="page-section" id="marketing">
-        <div class="page-title">
-          <div class="page-title-text">🎫 <span>营销管理</span></div>
-          <button class="btn btn-primary btn-sm">➕ 新建活动</button>
+      <!-- Recent Orders Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">最新订单</div>
+          <button class="btn-primary" onclick="switchSection('orders',document.querySelector('.nav-item:nth-child(4)'))">查看全部</button>
         </div>
-        <div class="tabs">
-          <div class="tab active" onclick="switchTab(this,'mkt')">优惠券</div>
-          <div class="tab" onclick="switchTab(this,'mkt')">满减活动</div>
-          <div class="tab" onclick="switchTab(this,'mkt')">限时秒杀</div>
-          <div class="tab" onclick="switchTab(this,'mkt')">首页Banner</div>
+        <div class="card-body" style="padding:0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>订单号</th><th>商品</th><th>用户</th><th>金额</th><th>状态</th><th>时间</th><th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>#JS20260531001</td><td>X900 Pro 一体机</td><td>张 ××</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥15,999</td><td><span class="badge badge-success">已发货</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">09:23</td><td><button class="action-link">详情</button></td></tr>
+              <tr><td>#JS20260531002</td><td>M5 Pro 迷你主机 ×3</td><td>企业采购</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥12,897</td><td><span class="badge badge-info">处理中</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">10:11</td><td><button class="action-link">处理</button></td></tr>
+              <tr><td>#JS20260531003</td><td>J32U 显示器</td><td>Thomas K.</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥3,299</td><td><span class="badge badge-warning">待付款</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">10:45</td><td><button class="action-link">催付</button></td></tr>
+              <tr><td>#JS20260531004</td><td>工作站旗舰套装</td><td>李女士</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥28,800</td><td><span class="badge badge-success">已完成</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">11:03</td><td><button class="action-link">查看</button></td></tr>
+              <tr><td>#JS20260531005</td><td>J27Q 显示器 ×2</td><td>设计公司</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥3,998</td><td><span class="badge badge-danger">已退款</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">11:38</td><td><button class="action-link danger">退款处理</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ ORDERS ============ -->
+    <div class="page-section" id="orders">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">订单管理</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-primary" onclick="showToast('新建订单 📝')">+ 新建订单</button>
+            <button class="btn-success" onclick="showToast('批量发货中... 📦')">⬆ 批量发货</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="tabs">
+            <div class="tab active" onclick="switchTab(this,'orders')">全部</div>
+            <div class="tab" onclick="switchTab(this,'orders')">待付款 <span class="badge badge-warning" style="margin-left:4px;">8</span></div>
+            <div class="tab" onclick="switchTab(this,'orders')">处理中 <span class="badge badge-info" style="margin-left:4px;">12</span></div>
+            <div class="tab" onclick="switchTab(this,'orders')">已发货</div>
+            <div class="tab" onclick="switchTab(this,'orders')">已完成</div>
+            <div class="tab" onclick="switchTab(this,'orders')">售后 <span class="badge badge-danger" style="margin-left:4px;">5</span></div>
+          </div>
+          <div class="filter-bar">
+            <input class="search-input-sm" placeholder="搜索订单号、用户名、商品...">
+            <select class="select-sm"><option>全部状态</option><option>待付款</option><option>处理中</option><option>已发货</option><option>已完成</option></select>
+            <select class="select-sm"><option>全部地区</option><option>国内</option><option>海外</option></select>
+            <button class="btn-primary" onclick="showToast('查询完成 🔍')">筛选</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr><th>订单号</th><th>商品信息</th><th>买家</th><th>金额</th><th>渠道</th><th>状态</th><th>创建时间</th><th>操作</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>#JS20260531001</td><td>X900 Pro 一体机 ×1</td><td>张 × × / 深圳</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥15,999</td><td><span class="badge badge-info">国内</span></td><td><span class="badge badge-success">已发货</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">2026-05-31 09:23</td><td><button class="action-link">详情</button> <button class="action-link">追踪</button></td></tr>
+              <tr><td>#JS20260531002</td><td>M5 Pro 迷你主机 ×3</td><td>企业采购 / 上海</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥12,897</td><td><span class="badge badge-info">国内</span></td><td><span class="badge badge-info">处理中</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">2026-05-31 10:11</td><td><button class="action-link">处理</button> <button class="action-link">发货</button></td></tr>
+              <tr><td>#JS20260531003</td><td>J32U 显示器 ×1</td><td>Thomas K. / DE</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥3,299</td><td><span class="badge badge-purple">海外</span></td><td><span class="badge badge-warning">待付款</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">2026-05-31 10:45</td><td><button class="action-link">催付</button> <button class="action-link danger">取消</button></td></tr>
+              <tr><td>#JS20260531004</td><td>工作站旗舰套装 ×1</td><td>李 × × / 北京</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥28,800</td><td><span class="badge badge-info">国内</span></td><td><span class="badge badge-success">已完成</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">2026-05-31 11:03</td><td><button class="action-link">查看</button></td></tr>
+              <tr><td>#JS20260530098</td><td>J27Q 显示器 ×2</td><td>设计公司 / 广州</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥3,998</td><td><span class="badge badge-info">国内</span></td><td><span class="badge badge-danger">已退款</span></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">2026-05-30 14:22</td><td><button class="action-link danger">退款详情</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ PRODUCTS ============ -->
+    <div class="page-section" id="products">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">商品管理</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-primary" onclick="showToast('新增商品 📝')">+ 新增商品</button>
+            <button class="btn-success" onclick="showToast('批量操作 📋')">批量操作</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="filter-bar">
+            <input class="search-input-sm" placeholder="搜索商品名、SKU...">
+            <select class="select-sm"><option>全部分类</option><option>一体机</option><option>迷你主机</option><option>显示器</option><option>台式电脑</option></select>
+            <select class="select-sm"><option>全部状态</option><option>上架中</option><option>已下架</option></select>
+            <button class="btn-primary" onclick="showToast('筛选完成 🔍')">筛选</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr><th>SKU</th><th>商品名称</th><th>分类</th><th>售价</th><th>库存</th><th>月销</th><th>状态</th><th>操作</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>JS-X900P</td>
+                <td>X900 Pro 旗舰一体机</td>
+                <td>一体机</td>
+                <td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥15,999</td>
+                <td>
+                  <div style="font-family:var(--font-mono);font-size:11px;color:var(--neon-green);">328</div>
+                  <div class="stock-bar"><div class="stock-fill stock-high" style="width:82%;"></div></div>
+                </td>
+                <td style="font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);">328</td>
+                <td><span class="badge badge-success">上架中</span></td>
+                <td><button class="action-link">编辑</button> <button class="action-link">价格</button></td>
+              </tr>
+              <tr>
+                <td>BF-M5P</td>
+                <td>BLCOOF M5 Pro 迷你主机</td>
+                <td>迷你主机</td>
+                <td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥4,299</td>
+                <td>
+                  <div style="font-family:var(--font-mono);font-size:11px;color:var(--neon-gold);">45</div>
+                  <div class="stock-bar"><div class="stock-fill stock-mid" style="width:30%;"></div></div>
+                </td>
+                <td style="font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);">512</td>
+                <td><span class="badge badge-success">上架中</span></td>
+                <td><button class="action-link">编辑</button> <button class="action-link">补货</button></td>
+              </tr>
+              <tr>
+                <td>JS-J32U</td>
+                <td>J32U 4K 商用显示器</td>
+                <td>显示器</td>
+                <td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥3,299</td>
+                <td>
+                  <div style="font-family:var(--font-mono);font-size:11px;color:var(--neon-red);">8</div>
+                  <div class="stock-bar"><div class="stock-fill stock-low" style="width:8%;"></div></div>
+                </td>
+                <td style="font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);">445</td>
+                <td><span class="badge badge-warning">库存警告</span></td>
+                <td><button class="action-link">编辑</button> <button class="action-link" style="color:var(--neon-red);">紧急补货</button></td>
+              </tr>
+              <tr>
+                <td>JS-PRWS</td>
+                <td>工作站旗舰台式套装</td>
+                <td>台式电脑</td>
+                <td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥28,800</td>
+                <td>
+                  <div style="font-family:var(--font-mono);font-size:11px;color:var(--neon-green);">67</div>
+                  <div class="stock-bar"><div class="stock-fill stock-high" style="width:67%;"></div></div>
+                </td>
+                <td style="font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);">67</td>
+                <td><span class="badge badge-success">上架中</span></td>
+                <td><button class="action-link">编辑</button> <button class="action-link">价格</button></td>
+              </tr>
+              <tr>
+                <td>JS-J27Q</td>
+                <td>J27Q 2K 显示器</td>
+                <td>显示器</td>
+                <td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥1,999</td>
+                <td>
+                  <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);">0</div>
+                  <div class="stock-bar"><div class="stock-fill stock-low" style="width:0%;"></div></div>
+                </td>
+                <td style="font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);">220</td>
+                <td><span class="badge badge-danger">已下架</span></td>
+                <td><button class="action-link">上架</button> <button class="action-link">编辑</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ USERS ============ -->
+    <div class="page-section" id="users">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">用户管理</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-primary" onclick="showToast('导出用户数据 📥')">导出数据</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="filter-bar">
+            <input class="search-input-sm" placeholder="搜索用户名、邮箱、手机号...">
+            <select class="select-sm"><option>全部类型</option><option>普通用户</option><option>企业用户</option><option>VIP用户</option></select>
+            <select class="select-sm"><option>全部状态</option><option>正常</option><option>已封禁</option></select>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr><th>用户ID</th><th>用户名</th><th>类型</th><th>地区</th><th>累计消费</th><th>订单数</th><th>状态</th><th>操作</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>U-001842</td><td>张 × × · 深圳</td><td><span class="badge badge-purple">VIP</span></td><td>国内</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥68,420</td><td>14</td><td><span class="badge badge-success">正常</span></td><td><button class="action-link">查看</button></td></tr>
+              <tr><td>U-003291</td><td>Thomas K. · DE</td><td><span class="badge badge-info">企业</span></td><td>海外</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥42,300</td><td>8</td><td><span class="badge badge-success">正常</span></td><td><button class="action-link">查看</button></td></tr>
+              <tr><td>U-006734</td><td>李 × × · 北京</td><td><span class="badge badge-info">企业</span></td><td>国内</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥89,600</td><td>22</td><td><span class="badge badge-success">正常</span></td><td><button class="action-link">查看</button></td></tr>
+              <tr><td>U-009012</td><td>游客用户 · 未知</td><td><span class="badge">普通</span></td><td>未知</td><td style="color:var(--neon-cyan);font-family:var(--font-mono);">¥0</td><td>0</td><td><span class="badge badge-warning">未验证</span></td><td><button class="action-link">联系</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ MARKETING ============ -->
+    <div class="page-section" id="marketing">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">营销管理</div>
+          <button class="btn-primary" onclick="showToast('新建活动 🎯')">+ 新建活动</button>
+        </div>
+        <div class="card-body">
+          <div class="promo-grid">
+            <div class="promo-card">
+              <div class="promo-icon">⚡</div>
+              <div class="promo-name">限时秒杀</div>
+              <div class="promo-desc">设置商品限时折扣，创造紧迫感，提升转化率</div>
+              <div class="promo-status">
+                <span class="badge badge-success">运行中</span>
+                <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-dot"></div></div>
+              </div>
+            </div>
+            <div class="promo-card">
+              <div class="promo-icon">🎫</div>
+              <div class="promo-name">优惠券</div>
+              <div class="promo-desc">全场满减、商品专属券、新用户首单券</div>
+              <div class="promo-status">
+                <span class="badge badge-info">12张有效</span>
+                <button class="action-link">管理</button>
+              </div>
+            </div>
+            <div class="promo-card">
+              <div class="promo-icon">🎁</div>
+              <div class="promo-name">满减活动</div>
+              <div class="promo-desc">消费满额享受阶梯优惠，提升客单价</div>
+              <div class="promo-status">
+                <span class="badge badge-success">运行中</span>
+                <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-dot"></div></div>
+              </div>
+            </div>
+            <div class="promo-card">
+              <div class="promo-icon">🌟</div>
+              <div class="promo-name">积分商城</div>
+              <div class="promo-desc">用户消费积累积分，可兑换商品或折扣</div>
+              <div class="promo-status">
+                <span class="badge badge-warning">待上线</span>
+                <div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-dot"></div></div>
+              </div>
+            </div>
+            <div class="promo-card">
+              <div class="promo-icon">👥</div>
+              <div class="promo-name">企业批发价</div>
+              <div class="promo-desc">企业客户专属阶梯价格，批量采购更优惠</div>
+              <div class="promo-status">
+                <span class="badge badge-success">运行中</span>
+                <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-dot"></div></div>
+              </div>
+            </div>
+            <div class="promo-card">
+              <div class="promo-icon">📧</div>
+              <div class="promo-name">邮件营销</div>
+              <div class="promo-desc">自动化邮件营销，触达全球潜在客户</div>
+              <div class="promo-status">
+                <span class="badge badge-warning">待配置</span>
+                <button class="action-link" onclick="showToast('跳转邮件配置...')">配置</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ CONTENT ============ -->
+    <div class="page-section" id="content">
+      <div class="card">
+        <div class="card-header"><div class="card-title">内容装修</div><button class="btn-primary" onclick="showToast('发布前台页面 🚀')">发布更新</button></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div style="background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.1);padding:20px;">
+              <div style="font-family:var(--font-hud);font-size:12px;color:var(--neon-cyan);margin-bottom:12px;letter-spacing:2px;">// HERO BANNER</div>
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">管理首页 Hero 轮播图内容，支持最多 6 张幻灯片，可拖拽排序。</div>
+              <div style="margin-top:12px;display:flex;gap:8px;"><button class="btn-primary" onclick="showToast('编辑Banner内容')">编辑</button><button class="action-link" onclick="showToast('预览效果 👁️')">预览</button></div>
+            </div>
+            <div style="background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.1);padding:20px;">
+              <div style="font-family:var(--font-hud);font-size:12px;color:var(--neon-cyan);margin-bottom:12px;letter-spacing:2px;">// 爆款推荐</div>
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">设置首页爆款产品区的商品排序和展示数量，最多显示 8 个。</div>
+              <div style="margin-top:12px;"><button class="btn-primary" onclick="showToast('管理推荐商品')">管理</button></div>
+            </div>
+            <div style="background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.1);padding:20px;">
+              <div style="font-family:var(--font-hud);font-size:12px;color:var(--neon-cyan);margin-bottom:12px;letter-spacing:2px;">// 公告跑马灯</div>
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">编辑顶部跑马灯文字，支持中英文双语独立设置。</div>
+              <div style="margin-top:12px;"><button class="btn-primary" onclick="showToast('编辑跑马灯文字')">编辑</button></div>
+            </div>
+            <div style="background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.1);padding:20px;">
+              <div style="font-family:var(--font-hud);font-size:12px;color:var(--neon-cyan);margin-bottom:12px;letter-spacing:2px;">// SEO 设置</div>
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">设置各页面 title、description、keywords，提升国内外搜索排名。</div>
+              <div style="margin-top:12px;"><button class="btn-primary" onclick="showToast('SEO 设置')">配置</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ AFTERSALE ============ -->
+    <div class="page-section" id="aftersale">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">售后工单</div>
+          <div style="display:flex;gap:8px;">
+            <span class="badge badge-danger" style="padding:6px 12px;">5 紧急</span>
+            <button class="btn-primary" onclick="showToast('刷新工单列表')">刷新</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="ticket-grid">
+            <div class="ticket-card">
+              <div class="ticket-id">#TK-2026-0531</div>
+              <div class="ticket-info">
+                <div class="ticket-title">X900 Pro 开机黑屏，无显示输出</div>
+                <div class="ticket-meta">用户: 张 × ×  · 下单3天 · 订单 #JS20260528003</div>
+              </div>
+              <span class="badge badge-danger priority-high">紧急</span>
+              <button class="action-link" onclick="showToast('处理工单 #TK-2026-0531')">处理</button>
+            </div>
+            <div class="ticket-card">
+              <div class="ticket-id">#TK-2026-0530</div>
+              <div class="ticket-info">
+                <div class="ticket-title">M5 Pro 海外物流包裹破损，要求重发</div>
+                <div class="ticket-meta">用户: Thomas K. · DE · 订单 #JS20260529011</div>
+              </div>
+              <span class="badge badge-warning priority-mid">普通</span>
+              <button class="action-link" onclick="showToast('处理工单 #TK-2026-0530')">处理</button>
+            </div>
+            <div class="ticket-card">
+              <div class="ticket-id">#TK-2026-0529</div>
+              <div class="ticket-info">
+                <div class="ticket-title">J32U 屏幕出现坏点，申请换货</div>
+                <div class="ticket-meta">用户: 李 × × · 北京 · 下单12天</div>
+              </div>
+              <span class="badge badge-success priority-low">低优先</span>
+              <button class="action-link" onclick="showToast('处理工单 #TK-2026-0529')">处理</button>
+            </div>
+            <div class="ticket-card">
+              <div class="ticket-id">#TK-2026-0528</div>
+              <div class="ticket-info">
+                <div class="ticket-title">询问工作站套装企业发票事宜</div>
+                <div class="ticket-meta">企业采购 · 上海 · 咨询类工单</div>
+              </div>
+              <span class="badge badge-info">咨询</span>
+              <button class="action-link" onclick="showToast('回复工单 #TK-2026-0528')">回复</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ LOGISTICS ============ -->
+    <div class="page-section" id="logistics">
+      <div class="card">
+        <div class="card-header"><div class="card-title">物流配置</div><button class="btn-primary" onclick="showToast('添加物流商')">+ 添加物流</button></div>
+        <div class="card-body">
+          <div class="logistics-grid">
+            <div class="logistics-card">
+              <div class="logistics-name">顺丰速运 SF Express</div>
+              <div class="logistics-rate">国内运费: <span class="rate-val" style="color:var(--neon-cyan);">首重 ¥12</span></div>
+              <div><span class="badge badge-success">已启用</span></div>
+              <div class="logistics-regions">
+                <span class="region-tag">全国</span><span class="region-tag">次日达</span>
+              </div>
+            </div>
+            <div class="logistics-card">
+              <div class="logistics-name">DHL Express</div>
+              <div class="logistics-rate">国际运费: <span class="rate-val" style="color:var(--neon-cyan);">首重 ¥280</span></div>
+              <div><span class="badge badge-success">已启用</span></div>
+              <div class="logistics-regions">
+                <span class="region-tag">欧洲</span><span class="region-tag">北美</span><span class="region-tag">澳洲</span>
+              </div>
+            </div>
+            <div class="logistics-card">
+              <div class="logistics-name">FedEx International</div>
+              <div class="logistics-rate">国际运费: <span class="rate-val" style="color:var(--neon-cyan);">首重 ¥260</span></div>
+              <div><span class="badge badge-success">已启用</span></div>
+              <div class="logistics-regions">
+                <span class="region-tag">美国</span><span class="region-tag">加拿大</span><span class="region-tag">东南亚</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ I18N ============ -->
+    <div class="page-section" id="i18n">
+      <div class="card">
+        <div class="card-header"><div class="card-title">双语管理</div><button class="btn-primary" onclick="showToast('保存翻译内容 ✅')">保存</button></div>
+        <div class="card-body">
+          <div class="i18n-grid">
+            <div class="lang-card">
+              <div class="lang-flag">🇨🇳</div>
+              <div class="lang-name">中文 (简体)</div>
+              <div class="lang-status" style="color:var(--neon-green);">ACTIVE · 默认语言</div>
+              <div class="lang-progress"><div class="lang-progress-bar" style="width:100%;"></div></div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;">翻译完成度: 100% / 文案条数: 2,840</div>
+              <button class="action-link" style="margin-top:12px;" onclick="showToast('编辑中文文案')">编辑文案</button>
+            </div>
+            <div class="lang-card">
+              <div class="lang-flag">🇺🇸</div>
+              <div class="lang-name">English (US)</div>
+              <div class="lang-status" style="color:var(--neon-cyan);">ACTIVE · 二语言</div>
+              <div class="lang-progress"><div class="lang-progress-bar" style="width:94%;"></div></div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;">翻译完成度: 94% / 待翻译: 170条</div>
+              <button class="action-link" style="margin-top:12px;" onclick="showToast('编辑英文文案')">编辑文案</button>
+            </div>
+          </div>
+          <div style="margin-top:20px;background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.1);padding:20px;">
+            <div style="font-family:var(--font-hud);font-size:11px;color:var(--neon-cyan);letter-spacing:2px;margin-bottom:14px;">// 批量翻译 · AI辅助</div>
+            <div class="filter-bar">
+              <input class="search-input-sm" placeholder="搜索文案 key 或内容...">
+              <select class="select-sm"><option>待翻译</option><option>已翻译</option><option>全部</option></select>
+              <button class="btn-primary" onclick="showToast('AI 自动翻译中... 🤖')">🤖 AI翻译</button>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;">已选择 0 条文案 · AI 翻译引擎: DeepL Pro + GPT-4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SETTINGS ============ -->
+    <div class="page-section" id="settings">
+      <div class="settings-layout">
+        <div class="settings-nav-list">
+          <div class="settings-nav-item active" onclick="switchSettingsNav(this,'基础信息')">🏪 基础信息</div>
+          <div class="settings-nav-item" onclick="switchSettingsNav(this,'账号安全')">🔐 账号安全</div>
+          <div class="settings-nav-item" onclick="switchSettingsNav(this,'支付配置')">💳 支付配置</div>
+          <div class="settings-nav-item" onclick="switchSettingsNav(this,'邮件配置')">📧 邮件配置</div>
+          <div class="settings-nav-item" onclick="switchSettingsNav(this,'权限管理')">👤 权限管理</div>
+          <div class="settings-nav-item" onclick="switchSettingsNav(this,'数据备份')">💾 数据备份</div>
+          <div class="settings-nav-item" onclick="switchSettingsNav(this,'API接口')">🌐 API接口</div>
         </div>
         <div class="card">
-          <div class="card-body" style="padding:0;">
-            <table>
-              <thead><tr><th>活动名称</th><th>类型</th><th>折扣/优惠</th><th>有效期</th><th>使用数</th><th>状态</th><th>操作</th></tr></thead>
-              <tbody>
-                <tr><td>618限时大促优惠券</td><td>满减券</td><td>满1000减100</td><td>2026-06-01 ~ 06-18</td><td>328</td><td><span class="status-badge" style="background:#f0fdf4;color:var(--success);">进行中</span></td><td><span class="action-link">编辑</span><span class="action-link danger">停止</span></td></tr>
-                <tr><td>新用户专属礼包</td><td>折扣券</td><td>9折</td><td>长期有效</td><td>1,204</td><td><span class="status-badge" style="background:#f0fdf4;color:var(--success);">进行中</span></td><td><span class="action-link">编辑</span><span class="action-link danger">停止</span></td></tr>
-                <tr><td>企业采购专属折扣</td><td>金额券</td><td>满5万减3000</td><td>2026-05-01 ~ 07-31</td><td>56</td><td><span class="status-badge" style="background:#f0fdf4;color:var(--success);">进行中</span></td><td><span class="action-link">编辑</span><span class="action-link danger">停止</span></td></tr>
-                <tr><td>海外用户首单折扣</td><td>折扣券</td><td>85折</td><td>2026-01-01 ~ 12-31</td><td>892</td><td><span class="status-badge" style="background:#f0fdf4;color:var(--success);">进行中</span></td><td><span class="action-link">编辑</span><span class="action-link danger">停止</span></td></tr>
-              </tbody>
-            </table>
+          <div class="card-header">
+            <div class="card-title" id="settingsTitle">基础信息</div>
+            <button class="btn-primary" onclick="showToast('设置已保存 ✅')">保存</button>
           </div>
-        </div>
-      </div>
-
-      <!-- ========== CONTENT ========== -->
-      <div class="page-section" id="content">
-        <div class="page-title"><div class="page-title-text">🎨 <span>内容装修</span></div><button class="btn btn-primary btn-sm">💾 保存并发布</button></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <div class="card">
-            <div class="card-header"><span class="card-title">首页Banner轮播管理</span><button class="btn btn-outline btn-sm">➕ 添加Banner</button></div>
-            <div class="card-body">
-              <div style="display:flex;flex-direction:column;gap:10px;">
-                <div style="display:flex;align-items:center;gap:12px;padding:10px;background:#f8faff;border-radius:8px;border:1px solid var(--border);">
-                  <div style="width:80px;height:48px;background:linear-gradient(135deg,#0A2540,#1E6FE8);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;">🖥️</div>
-                  <div style="flex:1;"><div style="font-size:13px;font-weight:500;">X900 Pro 旗舰新品上市</div><div style="font-size:11px;color:#718096;">链接: /products/x900-pro</div></div>
-                  <div style="display:flex;gap:6px;">
-                    <button class="btn btn-outline btn-sm">编辑</button>
-                    <button class="btn btn-outline btn-sm" style="cursor:grab;">⇅</button>
-                  </div>
-                </div>
-                <div style="display:flex;align-items:center;gap:12px;padding:10px;background:#f8faff;border-radius:8px;border:1px solid var(--border);">
-                  <div style="width:80px;height:48px;background:linear-gradient(135deg,#1a3320,#2d6a4f);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;">🌐</div>
-                  <div style="flex:1;"><div style="font-size:13px;font-weight:500;">海外贸易专区 · 全球直达</div><div style="font-size:11px;color:#718096;">链接: /global</div></div>
-                  <div style="display:flex;gap:6px;">
-                    <button class="btn btn-outline btn-sm">编辑</button>
-                    <button class="btn btn-outline btn-sm" style="cursor:grab;">⇅</button>
-                  </div>
-                </div>
-                <div style="display:flex;align-items:center;gap:12px;padding:10px;background:#f8faff;border-radius:8px;border:1px solid var(--border);">
-                  <div style="width:80px;height:48px;background:linear-gradient(135deg,#4a1a05,#8B4513);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;">🏭</div>
-                  <div style="flex:1;"><div style="font-size:13px;font-weight:500;">618 限时秒杀活动</div><div style="font-size:11px;color:#718096;">链接: /sale/618</div></div>
-                  <div style="display:flex;gap:6px;">
-                    <button class="btn btn-outline btn-sm">编辑</button>
-                    <button class="btn btn-outline btn-sm" style="cursor:grab;">⇅</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title">公告管理</span><button class="btn btn-outline btn-sm">➕ 新增公告</button></div>
-            <div class="card-body">
-              <div class="form-group">
-                <label class="form-label">公告标题（中文）</label>
-                <input type="text" class="form-input" value="2026年618大促活动正式开启">
-              </div>
-              <div class="form-group">
-                <label class="form-label">公告标题（英文）</label>
-                <input type="text" class="form-input" value="2026 618 Shopping Festival is Now Live!">
-              </div>
-              <div class="form-group">
-                <label class="form-label">公告内容</label>
-                <textarea class="form-input" style="height:80px;">全场最高立减3000元，企业采购满10台享专属折扣，海外用户首单85折...</textarea>
-              </div>
-              <div style="display:flex;gap:8px;">
-                <button class="btn btn-primary">发布公告</button>
-                <button class="btn btn-outline">预览</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== AFTER-SALE ========== -->
-      <div class="page-section" id="aftersale">
-        <div class="page-title"><div class="page-title-text">🔧 <span>售后管理</span></div></div>
-        <div class="card">
-          <div class="card-body" style="padding:0;">
-            <table>
-              <thead><tr><th>申请单号</th><th>用户</th><th>产品</th><th>类型</th><th>问题描述</th><th>申请时间</th><th>状态</th><th>操作</th></tr></thead>
-              <tbody>
-                <tr><td style="font-size:12px;">#AS2026052901</td><td>赵**</td><td>X900 Pro 一体机</td><td><span style="font-size:11px;background:rgba(226,75,74,0.1);color:var(--danger);padding:2px 6px;border-radius:4px;">退货退款</span></td><td style="font-size:12px;max-width:160px;">屏幕有轻微划痕，与描述不符</td><td style="font-size:12px;">05-29 03:22</td><td><span class="status-badge status-pending">待处理</span></td><td><span class="action-link">受理</span><span class="action-link">详情</span></td></tr>
-                <tr><td style="font-size:12px;">#AS2026052802</td><td>刘**</td><td>BLCOOF M5 Pro</td><td><span style="font-size:11px;background:rgba(30,111,232,0.1);color:var(--accent);padding:2px 6px;border-radius:4px;">维修</span></td><td style="font-size:12px;max-width:160px;">偶发性黑屏，重启后恢复</td><td style="font-size:12px;">05-28 15:45</td><td><span class="status-badge status-pending">待处理</span></td><td><span class="action-link">受理</span><span class="action-link">详情</span></td></tr>
-                <tr><td style="font-size:12px;">#AS2026052701</td><td>陈**</td><td>JISHU J32U</td><td><span style="font-size:11px;background:rgba(232,184,75,0.1);color:#BA7517;padding:2px 6px;border-radius:4px;">换货</span></td><td style="font-size:12px;max-width:160px;">颜色偏差，色彩校准异常</td><td style="font-size:12px;">05-27 10:30</td><td><span class="status-badge status-shipped">处理中</span></td><td><span class="action-link">跟进</span><span class="action-link">详情</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== LOGISTICS ========== -->
-      <div class="page-section" id="logistics">
-        <div class="page-title"><div class="page-title-text">🚚 <span>物流配置</span></div><button class="btn btn-primary btn-sm">➕ 添加物流商</button></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <div class="card">
-            <div class="card-header"><span class="card-title">国内物流商</span></div>
-            <div class="card-body">
-              <div class="form-group"><label class="form-label">顺丰速运 API Key</label><input type="password" class="form-input" value="••••••••••••••••"></div>
-              <div class="form-group"><label class="form-label">顺丰月结账号</label><input type="text" class="form-input" value="SF-CN-7829****"></div>
-              <div class="form-group"><label class="form-label">京东物流 API</label><input type="password" class="form-input" value="••••••••••••••••"></div>
-              <div class="form-group"><label class="form-label">默认运费设置</label>
-                <select class="form-select"><option>包邮（全国）</option><option>按重量计费</option><option>固定运费</option></select>
-              </div>
-              <button class="btn btn-primary">保存配置</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title">国际物流商</span></div>
-            <div class="card-body">
-              <div class="form-group"><label class="form-label">DHL Express API Key</label><input type="password" class="form-input" value="••••••••••••••••"></div>
-              <div class="form-group"><label class="form-label">FedEx API</label><input type="password" class="form-input" value="••••••••••••••••"></div>
-              <div class="form-group"><label class="form-label">UPS API</label><input type="password" class="form-input" value="••••••••••••••••"></div>
-              <div class="form-group"><label class="form-label">海外运费计算方式</label>
-                <select class="form-select"><option>按实重计费</option><option>按抛重计费</option><option>固定首重+续重</option></select>
-              </div>
-              <button class="btn btn-primary">保存配置</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== I18N ========== -->
-      <div class="page-section" id="i18n">
-        <div class="page-title"><div class="page-title-text">🌐 <span>双语管理</span></div><button class="btn btn-primary btn-sm">💾 保存全部</button></div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">全站文案双语对照编辑器</span></div>
           <div class="card-body">
-            <div class="filter-bar" style="margin-bottom:16px;">
-              <input class="search-input" placeholder="搜索文案...">
-              <select class="filter-select"><option>全部页面</option><option>首页</option><option>产品页</option><option>订单页</option><option>用户中心</option></select>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">品牌名称（中文）</label>
+                <input class="form-input" value="集数科技">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Brand Name (EN)</label>
+                <input class="form-input" value="JISHU Tech">
+              </div>
             </div>
-            <table>
-              <thead><tr><th>Key</th><th>中文（ZH）</th><th>英文（EN）</th><th>操作</th></tr></thead>
-              <tbody>
-                <tr><td style="font-size:11px;color:#718096;">nav.home</td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="首页"></td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="Home"></td><td><span class="action-link">保存</span></td></tr>
-                <tr><td style="font-size:11px;color:#718096;">nav.aio</td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="一体机"></td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="All-in-One PC"></td><td><span class="action-link">保存</span></td></tr>
-                <tr><td style="font-size:11px;color:#718096;">hero.title</td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="高端电脑硬件 极致性能体验"></td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="Premium Computing Extreme Performance"></td><td><span class="action-link">保存</span></td></tr>
-                <tr><td style="font-size:11px;color:#718096;">product.add_cart</td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="加入购物车"></td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="Add to Cart"></td><td><span class="action-link">保存</span></td></tr>
-                <tr><td style="font-size:11px;color:#718096;">footer.warranty</td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="三年整机质保"></td><td><input class="form-input" style="padding:5px 8px;font-size:12px;" value="3-Year Warranty"></td><td><span class="action-link">保存</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== SETTINGS ========== -->
-      <div class="page-section" id="settings">
-        <div class="page-title"><div class="page-title-text">⚙️ <span>系统设置</span></div></div>
-        <div class="settings-grid">
-          <div class="settings-nav">
-            <div class="settings-nav-item active" onclick="switchSettingsNav(this,'基础信息')">🏪 基础信息</div>
-            <div class="settings-nav-item" onclick="switchSettingsNav(this,'账号安全')">🔐 账号安全</div>
-            <div class="settings-nav-item" onclick="switchSettingsNav(this,'支付配置')">💳 支付配置</div>
-            <div class="settings-nav-item" onclick="switchSettingsNav(this,'邮件配置')">📧 邮件配置</div>
-            <div class="settings-nav-item" onclick="switchSettingsNav(this,'权限管理')">👤 权限管理</div>
-            <div class="settings-nav-item" onclick="switchSettingsNav(this,'数据备份')">💾 数据备份</div>
-            <div class="settings-nav-item" onclick="switchSettingsNav(this,'API接口')">🌐 API接口</div>
-          </div>
-          <div class="card" style="margin:0;">
-            <div class="card-header"><span class="card-title">网站基础信息</span><button class="btn btn-primary btn-sm">保存设置</button></div>
-            <div class="card-body">
-              <div class="form-grid">
-                <div class="form-group"><label class="form-label">网站名称（中文）</label><input type="text" class="form-input" value="集数科技官方旗舰商城"></div>
-                <div class="form-group"><label class="form-label">网站名称（英文）</label><input type="text" class="form-input" value="JISHU TECH Official Store"></div>
-                <div class="form-group"><label class="form-label">客服邮箱</label><input type="text" class="form-input" value="support@jishu.com"></div>
-                <div class="form-group"><label class="form-label">客服电话</label><input type="text" class="form-input" value="+86 400-888-XXXX"></div>
-                <div class="form-group"><label class="form-label">WhatsApp（海外）</label><input type="text" class="form-input" value="+86 138-XXXX-XXXX"></div>
-                <div class="form-group"><label class="form-label">备案号</label><input type="text" class="form-input" value="粤ICP备XXXXXXXX号"></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">官网域名</label>
+                <input class="form-input" value="jishu888.github.io">
               </div>
-              <div class="form-group"><label class="form-label">SEO描述（中文）</label><textarea class="form-input" style="height:72px;">集数科技官方旗舰商城，提供一体机电脑、迷你主机、商用显示器、台式机，国内外双语服务，品质保障。</textarea></div>
-              <div class="form-group"><label class="form-label">SEO Description (EN)</label><textarea class="form-input" style="height:72px;">JISHU TECH Official Store - Premium All-in-One PCs, Mini PCs, Commercial Monitors & Desktops. Worldwide shipping, 3-year warranty.</textarea></div>
-              <div style="margin-top:8px;padding:12px;background:#f8faff;border-radius:8px;border:1px solid var(--border);">
-                <div style="font-size:12px;font-weight:600;margin-bottom:8px;">🔌 Odoo ERP 集成接口</div>
-                <div class="form-group" style="margin-bottom:8px;"><label class="form-label">Odoo 服务器地址</label><input type="text" class="form-input" placeholder="https://erp.jishu.com"></div>
-                <div class="form-group" style="margin:0;"><label class="form-label">API Token</label><input type="password" class="form-input" placeholder="留空则不启用ERP同步"></div>
+              <div class="form-group">
+                <label class="form-label">客服邮箱</label>
+                <input class="form-input" value="support@jishu.com">
               </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">系统版本</label>
+                <input class="form-input" value="v3.14.0" readonly style="color:var(--neon-cyan);cursor:default;">
+              </div>
+              <div class="form-group">
+                <label class="form-label">AI 引擎</label>
+                <input class="form-input" value="JISHU-AI v1.2 (GPT-4 + Custom)" readonly style="color:var(--neon-green);cursor:default;">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">品牌简介（中文）</label>
+              <textarea class="form-input" style="height:80px;resize:none;padding-top:10px;line-height:1.6;">AI 智能一体化终端硬件平台，专注于高端计算机硬件的研发与销售。服务全球120,000+企业客户，覆盖35+国家地区。</textarea>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div>
+  </div>
+</main>
 
+<!-- CHART.JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
+// ============ CLOCK
+setInterval(function() {
+  var now = new Date();
+  var el = document.getElementById('adminClock');
+  if (el) el.textContent = now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+},1000);
+
+// ============ SECTION SWITCH
 function switchSection(id, el) {
   document.querySelectorAll('.page-section').forEach(function(s) { s.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
@@ -1012,79 +1105,160 @@ function switchSection(id, el) {
   if (target) target.classList.add('active');
   if (el) el.classList.add('active');
   var titles = {
-    dashboard:'数据看板', orders:'订单管理', products:'商品管理', users:'用户管理',
-    marketing:'营销管理', content:'内容装修', aftersale:'售后管理',
-    logistics:'物流配置', i18n:'双语管理', settings:'系统设置'
+    dashboard:'数据看板',orders:'订单管理',products:'商品管理',users:'用户管理',
+    marketing:'营销管理',content:'内容装修',aftersale:'售后管理',
+    logistics:'物流配置',i18n:'双语管理',settings:'系统设置'
   };
   var bc = document.getElementById('breadcrumbCurrent');
   if (bc) bc.textContent = titles[id] || id;
 }
 
+// ============ TAB SWITCH
 function switchTab(el, group) {
   var parent = el.closest('.tabs');
   if (parent) parent.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
   el.classList.add('active');
-  // Show brief feedback about selected tab
-  if (group === 'tab-orders') {
-    showToast('已切换到: ' + el.textContent.trim());
-  }
-  if (group === 'mkt') {
-    showToast('已切换到: ' + el.textContent.trim());
-  }
+  showToast('已切换: ' + el.textContent.trim().replace(/\s+\d+$/,''));
 }
 
+// ============ SETTINGS NAV
 function switchSettingsNav(el, name) {
-  var nav = el.closest('.settings-nav');
+  var nav = el.closest('.settings-nav-list');
   if (nav) nav.querySelectorAll('.settings-nav-item').forEach(function(n) { n.classList.remove('active'); });
   el.classList.add('active');
-  // Update card title
-  var titleEl = document.querySelector('#settings .card-title');
+  var titleEl = document.getElementById('settingsTitle');
   if (titleEl) titleEl.textContent = name;
+  showToast('// ' + name.toUpperCase());
 }
 
-// Action link feedback
-document.addEventListener('click', function(e) {
-  if (e.target && e.target.classList.contains('action-link')) {
-    var action = e.target.textContent.trim();
-    // Show a brief toast notification for action feedback
-    showToast(action + ' 操作已执行');
-  }
-});
-
-// Button feedback for primary actions
-document.addEventListener('click', function(e) {
-  if (e.target && e.target.classList.contains('btn-primary') || (e.target && e.target.classList.contains('btn-success'))) {
-    var text = e.target.textContent.trim();
-    if (text.indexOf('刷新') !== -1) { showToast('数据已刷新 ✅'); }
-    else if (text.indexOf('导出') !== -1) { showToast('报表导出中... 📥'); }
-    else if (text.indexOf('保存') !== -1) { showToast('设置已保存 ✅'); }
-    else if (text.indexOf('新建') !== -1 || text.indexOf('新增') !== -1 || text.indexOf('添加') !== -1) { showToast('请填写表单 📝'); }
-    else if (text.indexOf('发布') !== -1) { showToast('已成功发布 🚀'); }
-    else if (text.indexOf('发货') !== -1) { showToast('发货处理中... 📦'); }
-    else if (text.indexOf('搜索') !== -1 || text.indexOf('筛选') !== -1) { showToast('查询完成 🔍'); }
-  }
-});
-
-// Toast notification system
+// ============ TOAST
 function showToast(msg) {
-  var existing = document.querySelector('.admin-toast');
-  if (existing) existing.remove();
-  var toast = document.createElement('div');
-  toast.className = 'admin-toast';
-  toast.textContent = msg;
-  toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#0A2540;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,0.2);animation:toastIn 0.3s ease;';
-  document.body.appendChild(toast);
+  var old = document.querySelector('.admin-toast');
+  if (old) old.remove();
+  var t = document.createElement('div');
+  t.className = 'admin-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
   setTimeout(function() {
-    toast.style.opacity = '0';
-    toast.style.transition = 'opacity 0.3s';
-    setTimeout(function() { toast.remove(); }, 300);
+    t.style.transition = 'opacity 0.3s';
+    t.style.opacity = '0';
+    setTimeout(function() { if(t.parentNode) t.remove(); },300);
   }, 2200);
 }
 
-// Add toast animation keyframe
-var style = document.createElement('style');
-style.textContent = '@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}';
-document.head.appendChild(style);
+// ============ ACTION LINKS
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.classList.contains('action-link')) {
+    showToast('◈ ' + e.target.textContent.trim() + ' 操作已触发');
+  }
+});
+
+// ============ MINI BAR CHARTS
+function buildMiniBar(id, data, type) {
+  var container = document.getElementById(id);
+  if (!container) return;
+  container.innerHTML = '';
+  var max = Math.max.apply(null, data);
+  data.forEach(function(v, i) {
+    var bar = document.createElement('div');
+    bar.className = 'mini-bar ' + type;
+    bar.style.height = Math.round((v/max)*100) + '%';
+    bar.style.opacity = i === data.length-1 ? '1' : '0.4';
+    container.appendChild(bar);
+  });
+}
+buildMiniBar('chart-rev',[180,220,195,240,260,250,285],'cyan');
+buildMiniBar('chart-ord',[900,1100,980,1180,1240,1200,1247],'green');
+buildMiniBar('chart-usr',[32000,33500,34200,35800,36900,38000,38920],'gold');
+buildMiniBar('chart-tkt',[35,28,30,26,24,28,23],'purple');
+
+// ============ CHARTS (Chart.js)
+var chartDefaults = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { color: '#7BA3CC', font: { family: 'Share Tech Mono', size: 10 }, boxWidth: 10 } }
+  }
+};
+var gridColor = 'rgba(0,212,255,0.07)';
+var tickColor = '#3D6080';
+
+// Revenue Chart
+var revCtx = document.getElementById('revenueChart');
+if (revCtx) {
+  new Chart(revCtx, {
+    type: 'line',
+    data: {
+      labels: ['5/25','5/26','5/27','5/28','5/29','5/30','5/31'],
+      datasets: [
+        {
+          label: '营收 (万元)',
+          data: [18.2,22.4,19.5,24.0,26.1,25.0,28.5],
+          borderColor: '#00D4FF',
+          backgroundColor: 'rgba(0,212,255,0.05)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#00D4FF',
+          pointRadius: 3,
+          pointHoverRadius: 5
+        },
+        {
+          label: '订单量 (百)',
+          data: [9.0,11.1,9.8,11.8,12.4,12.0,12.5],
+          borderColor: '#00FF88',
+          backgroundColor: 'rgba(0,255,136,0.04)',
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4,
+          pointBackgroundColor: '#00FF88',
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          borderDash: [4,2]
+        }
+      ]
+    },
+    options: Object.assign({}, chartDefaults, {
+      scales: {
+        x: { ticks:{color:tickColor,font:{family:'Share Tech Mono',size:9}}, grid:{color:gridColor} },
+        y: { ticks:{color:tickColor,font:{family:'Share Tech Mono',size:9}}, grid:{color:gridColor} }
+      }
+    })
+  });
+}
+
+// Category Chart
+var catCtx = document.getElementById('categoryChart');
+if (catCtx) {
+  new Chart(catCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['一体机', '迷你主机', '显示器', '台式电脑'],
+      datasets: [{
+        data: [38, 30, 22, 10],
+        backgroundColor: [
+          'rgba(0,212,255,0.7)',
+          'rgba(0,255,136,0.7)',
+          'rgba(255,184,0,0.7)',
+          'rgba(123,47,255,0.7)'
+        ],
+        borderColor: [
+          'rgba(0,212,255,1)',
+          'rgba(0,255,136,1)',
+          'rgba(255,184,0,1)',
+          'rgba(123,47,255,1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: Object.assign({}, chartDefaults, {
+      cutout: '65%',
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#7BA3CC', font: { family: 'Share Tech Mono', size: 9 }, padding: 12, boxWidth: 8 } }
+      }
+    })
+  });
+}
 </script>
 </body>
 </html>
