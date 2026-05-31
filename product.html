@@ -628,7 +628,8 @@ body::before {
         <!-- 视频播放层（默认隐藏） -->
         <div class="main-video-wrap" id="mainVideoWrap">
           <video id="mainVideo" controls playsinline preload="metadata"
-            poster="" onended="onVideoEnded()">
+            referrerpolicy="no-referrer" crossorigin="anonymous"
+            poster="" onended="onVideoEnded()" onerror="onVideoError()">
             <source src="" type="video/mp4">
             Your browser does not support video.
           </video>
@@ -1148,6 +1149,7 @@ function updateCartBadge(){
 ═══════════════════════════════════════ */
 let currentProduct = null;
 let currentImgIdx = 0;
+let isVideoMode = false;
 let currentImages = [];
 
 function getProductId(){
@@ -1220,8 +1222,6 @@ function renderProduct(){
 }
 
 /* GALLERY — 支持视频（仿淘宝：首个位置为视频） */
-let currentImgIdx = 0;
-let isVideoMode = false;
 
 function renderGallery(){
   const mainImg = document.getElementById('mainImg');
@@ -1239,6 +1239,7 @@ function renderGallery(){
     document.getElementById('zoomHint').style.display = 'none';
     // 设置 video 元素的 src 和 poster
     const vidEl = document.getElementById('mainVideo');
+    vidEl.setAttribute('referrerpolicy', 'no-referrer');
     vidEl.src = currentProduct.video;
     vidEl.poster = poster;
     document.getElementById('imgIndexLabel').textContent =
@@ -1372,6 +1373,18 @@ function closeVideo(){
 function onVideoEnded(){
   // 结束后停留在最后一帧，不自动关闭
   // 用户可点击 ✕ 关闭或点击其他缩略图切换
+}
+
+// ── 视频加载/播放错误处理 ──
+function onVideoError(){
+  console.warn('视频加载失败，可能受防盗链限制');
+  const wrap = document.getElementById('mainVideoWrap');
+  const mainImg = document.getElementById('mainImg');
+  wrap.classList.remove('active');
+  mainImg.style.display = 'block';
+  if(isVideoMode){
+    document.getElementById('videoPlayOverlay').classList.add('show');
+  }
 }
 
 function galleryPrev(){
