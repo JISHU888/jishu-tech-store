@@ -921,18 +921,22 @@ const PRODUCTS = [
     titleEn: "JISHU 34\" 4K 144Hz All-in-One PC — AMD R7 + 6G Discrete GPU",
     subtitle: "JISHU-3410G · 集数科技 独显游戏一体机",
     price: 2498,
-    priceOriginal: 3499,
+    priceOriginal: 2698,
     badge: ["hot", "pro"],
-    // ── 淘宝真实主图/副图（Gallery 轮播） ──
+    // ── 淘宝真实主图/副图（Gallery 轮播）— 全部来自卖家4126786374 ──
     images: [
+      // 主图（产品展示）
       "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01wpuCSq1wxLV3RyjAA_!!4126786374.jpg",
       "https://gw.alicdn.com/imgextra/O1CN01n1WE5j1wxLdZatQc9_!!4126786374.png",
       "https://gw.alicdn.com/imgextra/O1CN01lBMLDK1wxLVtBcQlB_!!4126786374.png",
       "https://gw.alicdn.com/imgextra/O1CN01ypzVdN1wxLVqQUDTs_!!4126786374.png",
       "https://gw.alicdn.com/imgextra/O1CN01yHaK4D1wxLVsCdLUC_!!4126786374.png",
       "https://gw.alicdn.com/imgextra/O1CN01E00Z9N1wxLVqQSXXE_!!4126786374.png",
+      // 新增：更多角度展示
       "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01Li8sGi1wxLVpBRfAP_!!4126786374.jpg",
       "https://img.alicdn.com/imgextra/i2/4126786374/O1CN018Cizkl1wxLVr437E8_!!4126786374.jpg",
+      "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01EhY3XR1wxLVrlquJV_!!4126786374.jpg",
+      "https://img.alicdn.com/imgextra/i4/4126786374/O1CN01eO2Bht1wxLVsCFNLz_!!4126786374.jpg",
     ],
     get imagesFallback(){
       return [
@@ -968,12 +972,29 @@ const PRODUCTS = [
       ["整机重量", "约13.5kg"],
     ],
     skus: [
-      { label: "内存配置 / RAM", options: ["16GB DDR4（标配）", "32GB DDR4（+¥499）", "64GB DDR4（+¥1299）"] },
-      { label: "存储配置 / STORAGE", options: ["512GB SSD（标配）", "1TB SSD（+¥299）", "512GB+1TB（+¥599）"] },
+      // ── 淘宝真实 SKU（与淘宝商品页一致） ──
+      { label: "套餐类型 / PACKAGE", options: [
+        "34英寸4K直面屏 / WiFi6 / 三年质保",
+        "34英寸4K曲面屏 / WiFi6 / 三年质保",
+      ]},
+      { label: "处理器 / CPU", options: [
+        "AMD R5-5600G / 8核（标配）",
+        "AMD R7-5800H / 8核16线程（+¥300）",
+      ]},
+      { label: "内存 / RAM", options: [
+        "8GB DDR4（标配）",
+        "16GB DDR4（+¥200）",
+        "32GB DDR4（+¥500）",
+      ]},
+      { label: "存储 / STORAGE", options: [
+        "256GB SSD（标配）",
+        "512GB SSD（+¥150）",
+        "1TB SSD（+¥350）",
+      ]},
     ],
     get detailImages(){
       return [
-        // ── 淘宝真实详情图（卖家4126786374） ──
+        // ── 淘宝真实详情图（卖家4126786374）完整版 ──
         { src: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01LH2ZtY1wxLVszJB1v_!!4126786374.png", caption: "产品整体展示 · 全貌" },
         { src: "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01AbD5RY1wxLVtC8eja_!!4126786374.png", caption: "屏幕细节 · 显示效果" },
         { src: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01ivmbHY1wxLVqRHIJ4_!!4126786374.png", caption: "接口配置 · 扩展能力" },
@@ -987,6 +1008,19 @@ const PRODUCTS = [
         { src: "https://img.alicdn.com/imgextra/i4/4126786374/O1CN0141pmXO1wxLVjgvu7u_!!4126786374.png", caption: "包装清单 · 配件一览" },
         { src: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01tPR9ix1wxLVszJB3c_!!4126786374.png", caption: "售后服务 · 品质保障" },
         { src: "https://img.alicdn.com/imgextra/i1/4126786374/O1CN01Es3Fs41wxLVpBj7PP_!!4126786374.png", caption: "用户实拍 · 真实反馈" },
+        // ── 新增详情图（第二批提取） ──
+        { src: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01gsLGXv1wxLVtBKZbR_!!4126786374.jpg", caption: "直面屏 vs 曲面屏 对比" },
+        { src: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01uaG8K61wxLVqW6Akr_!!4126786374.jpg", caption: "屏幕面板技术解析" },
+        { src: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01MLPxBr1flZy969k5W_!!4126786374.jpg", caption: "144Hz 高刷效果演示" },
+        { src: "https://gw.alicdn.com/imgextra/i2/O1CN01KdloOc1iYhaZElYLo_!!4126786374.png", caption: "色彩还原度展示" },
+        { src: "https://gw.alicdn.com/imgextra/i3/O1CN01ywvaIw1Vf23dTriiP_!!4126786374.png", caption: "多任务分屏演示" },
+        { src: "https://gw.alicdn.com/imgextra/i3/O1CN018OeEm11qBoiyKY6F6_!!4126786374.png", caption: "游戏帧率测试" },
+        { src: "https://gw.alicdn.com/imgextra/i3/O1CN017M9n9g24KtBtclhMh_!!4126786374.png", caption: "办公效率展示" },
+        { src: "https://img.alicdn.com/imgextra/i4/O1CN01FOK30u1SymJbsQUtk_!!4126786374.png", caption: "WiFi6 网络性能" },
+        { src: "https://img.alicdn.com/imgextra/i3/O1CN01CkZbKp27arsx4ktdK_!!4126786374.png", caption: "接口速度实测" },
+        { src: "https://img.alicdn.com/imgextra/i1/O1CN01Go6lqn28DnZ3MlmFE_!!4126786374.png", caption: "拆解内部结构" },
+        { src: "https://img.alicdn.com/imgextra/i1/O1CN01at70Km26oJu1Kk0vt_!!4126786374.png", caption: "升级指南" },
+        { src: "https://img.alicdn.com/imgextra/i2/O1CN01RAWBfz20zsCKuENux_!!4126786374.png", caption: "品质认证" },
       ];
     },
     reviews: [
