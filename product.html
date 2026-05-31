@@ -314,6 +314,52 @@ body::before {
 .sku-btn.active { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0,212,255,0.1); box-shadow: 0 0 8px rgba(0,212,255,0.2); }
 .sku-btn.disabled { opacity: 0.3; cursor: not-allowed; }
 
+/* 价格变化动画 */
+@keyframes priceFlash {
+  0%{ color: var(--neon-cyan); text-shadow: 0 0 12px rgba(0,212,255,0.8), 0 0 24px rgba(0,212,255,0.4); transform: scale(1.08); }
+  100%{ color: inherit; text-shadow: none; transform: scale(1); }
+}
+.price-flash { animation: priceFlash 0.4s ease-out; }
+
+/* 已选配置汇总栏（仿淘宝） */
+.sku-summary-bar {
+  margin-top: 10px; padding: 10px 16px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.06) 0%, rgba(0,180,216,0.03) 100%);
+  border: 1px solid rgba(0,212,255,0.15);
+  clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+}
+.sku-sel-left {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  font-size: 11px; color: var(--text-secondary); flex: 1; min-width: 0;
+}
+.sku-sel-item {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 8px; background: var(--glass); border-radius: 3px;
+  white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis;
+}
+.sku-sel-group {
+  color: var(--neon-cyan); font-family: var(--font-mono); font-size: 9px;
+  opacity: 0.7; letter-spacing: 1px;
+}
+.sku-sel-item em {
+  color: #ff6b6b; font-style: normal; font-weight: 600; font-size: 10px;
+  margin-left: 2px;
+}
+.sku-sel-right {
+  display: flex; align-items: baseline; gap: 6px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.sku-sel-total-label {
+  font-size: 11px; color: var(--text-dim); font-family: var(--font-mono);
+}
+.sku-sel-total-val {
+  font-size: 20px; font-weight: 800; color: var(--neon-cyan);
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 10px rgba(0,212,255,0.4);
+}
+
 /* 数量选择 */
 .qty-row { display: flex; align-items: center; gap: 16px; }
 .qty-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
@@ -889,9 +935,20 @@ const PRODUCTS = [
       ["认证", "3C / CE / FCC / RoHS"],
     ],
     skus: [
-      { label: "内存配置 / RAM", options: ["16GB DDR4（标配）", "32GB DDR4（+¥499）", "64GB DDR4（+¥1299）"] },
-      { label: "存储配置 / STORAGE", options: ["512GB SSD（标配）", "1TB SSD（+¥299）", "512GB+1TB双盘（+¥599）"] },
-      { label: "支架版本 / STAND", options: ["升降旋转支架（标配）", "VESA壁挂版（不含支架）"] }
+      { label: "内存配置 / RAM", options: [
+        { text: "16GB DDR4（标配）", delta: 0 },
+        { text: "32GB DDR4", delta: 499 },
+        { text: "64GB DDR4", delta: 1299 },
+      ]},
+      { label: "存储配置 / STORAGE", options: [
+        { text: "512GB SSD（标配）", delta: 0 },
+        { text: "1TB SSD", delta: 299 },
+        { text: "512GB+1TB 双盘", delta: 599 },
+      ]},
+      { label: "支架版本 / STAND", options: [
+        { text: "升降旋转支架（标配）", delta: 0 },
+        { text: "VESA 壁挂版（不含支架）", delta: -150 },
+      ]},
     ],
     get detailImages(){
       return [
@@ -972,24 +1029,24 @@ const PRODUCTS = [
       ["整机重量", "约13.5kg"],
     ],
     skus: [
-      // ── 淘宝真实 SKU（与淘宝商品页一致） ──
+      // ── 淘宝真实 SKU（与淘宝商品页一致，含差价） ──
       { label: "套餐类型 / PACKAGE", options: [
-        "34英寸4K直面屏 / WiFi6 / 三年质保",
-        "34英寸4K曲面屏 / WiFi6 / 三年质保",
+        { text: "34英寸4K直面屏 / WiFi6 / 三年质保", delta: 0 },
+        { text: "34英寸4K曲面屏 / WiFi6 / 三年质保", delta: 200 },
       ]},
       { label: "处理器 / CPU", options: [
-        "AMD R5-5600G / 8核（标配）",
-        "AMD R7-5800H / 8核16线程（+¥300）",
+        { text: "AMD R5-5600G / 8核（标配）", delta: 0 },
+        { text: "AMD R7-5800H / 8核16线程", delta: 300 },
       ]},
       { label: "内存 / RAM", options: [
-        "8GB DDR4（标配）",
-        "16GB DDR4（+¥200）",
-        "32GB DDR4（+¥500）",
+        { text: "8GB DDR4（标配）", delta: 0 },
+        { text: "16GB DDR4", delta: 200 },
+        { text: "32GB DDR4", delta: 500 },
       ]},
       { label: "存储 / STORAGE", options: [
-        "256GB SSD（标配）",
-        "512GB SSD（+¥150）",
-        "1TB SSD（+¥350）",
+        { text: "256GB SSD（标配）", delta: 0 },
+        { text: "512GB SSD", delta: 150 },
+        { text: "1TB SSD", delta: 350 },
       ]},
     ],
     get detailImages(){
@@ -1076,9 +1133,20 @@ const PRODUCTS = [
       ["认证", "TÜV莱茵 / 3C / CE / FCC / RoHS"],
     ],
     skus: [
-      { label: "内存配置 / RAM", options: ["32GB DDR5（标配）", "64GB DDR5（+¥1499）", "128GB DDR5（+¥3999）"] },
-      { label: "存储配置 / STORAGE", options: ["1TB PCIe 4.0（标配）", "2TB PCIe 4.0（+¥699）", "1TB+2TB（+¥1199）"] },
-      { label: "颜色 / COLOR", options: ["星空灰", "月光银"] },
+      { label: "内存配置 / RAM", options: [
+        { text: "32GB DDR5（标配）", delta: 0 },
+        { text: "64GB DDR5", delta: 1499 },
+        { text: "128GB DDR5", delta: 3999 },
+      ]},
+      { label: "存储配置 / STORAGE", options: [
+        { text: "1TB PCIe 4.0（标配）", delta: 0 },
+        { text: "2TB PCIe 4.0", delta: 699 },
+        { text: "1TB+2TB 双盘", delta: 1199 },
+      ]},
+      { label: "颜色 / COLOR", options: [
+        { text: "星空灰", delta: 0 },
+        { text: "月光银", delta: 100 },
+      ]},
     ],
     get detailImages(){
       return [
@@ -1143,8 +1211,16 @@ const PRODUCTS = [
       ["认证", "3C / 低蓝光认证"],
     ],
     skus: [
-      { label: "内存配置 / RAM", options: ["8GB DDR4（标配）", "16GB DDR4（+¥299）", "32GB DDR4（+¥799）"] },
-      { label: "存储配置 / STORAGE", options: ["256GB SSD（标配）", "512GB SSD（+¥199）", "1TB SSD（+¥499）"] },
+      { label: "内存配置 / RAM", options: [
+        { text: "8GB DDR4（标配）", delta: 0 },
+        { text: "16GB DDR4", delta: 299 },
+        { text: "32GB DDR4", delta: 799 },
+      ]},
+      { label: "存储配置 / STORAGE", options: [
+        { text: "256GB SSD（标配）", delta: 0 },
+        { text: "512GB SSD", delta: 199 },
+        { text: "1TB SSD", delta: 499 },
+      ]},
     ],
     get detailImages(){
       return [
@@ -1462,32 +1538,204 @@ function closeLightbox(){
   document.getElementById('lightbox').classList.remove('open');
 }
 
-/* SKU */
+/* SKU — 带价格联动（仿淘宝） */
+let selectedSKUIndices = []; // 每组选中的索引
+
 function renderSkus(){
   const wrap = document.getElementById('skuSection');
   wrap.innerHTML='';
-  (currentProduct.skus||[]).forEach(sku => {
+  selectedSKUIndices = [];
+  const skuList = currentProduct.skus || [];
+
+  if(skuList.length === 0){
+    wrap.style.display='none';
+    return;
+  }
+  wrap.style.display='';
+
+  skuList.forEach((sku, groupIdx) => {
     const row = document.createElement('div');
     row.className='sku-row';
+    row.dataset.groupIdx = groupIdx;
+
     const label = document.createElement('div');
     label.className='sku-label';
     label.textContent = sku.label;
+    label.id = 'skuLabel_'+groupIdx;
+
     const opts = document.createElement('div');
     opts.className='sku-options';
+    opts.id = 'skuOpts_'+groupIdx;
+
+    // 默认选中每组第一个（delta=0 的基础款）
+    selectedSKUIndices[groupIdx] = 0;
+
     sku.options.forEach((opt, i) => {
+      // 兼容旧格式(字符串)和新格式({text, delta})
+      const optText = typeof opt === 'string' ? opt : (opt.text || '');
+      const optDelta = typeof opt === 'string' ? 0 : (opt.delta || 0);
+
       const btn = document.createElement('button');
       btn.className='sku-btn'+(i===0?' active':'');
-      btn.textContent = opt;
-      btn.onclick = function(){
-        this.closest('.sku-options').querySelectorAll('.sku-btn').forEach(b=>b.classList.remove('active'));
-        this.classList.add('active');
-      };
+      btn.textContent = optText;
+      btn.dataset.groupIdx = groupIdx;
+      btn.dataset.optIdx = i;
+      btn.dataset.delta = optDelta;
+      btn.onclick = function(){ selectSKUBtn(this); };
       opts.appendChild(btn);
     });
+
     row.appendChild(label);
     row.appendChild(opts);
     wrap.appendChild(row);
   });
+
+  // 初始计算价格
+  recalculatePrice();
+}
+
+// ── 选择某个 SKU 选项 → 重算价格 ──
+function selectSKUBtn(btn){
+  const groupIdx = parseInt(btn.dataset.groupIdx);
+  const optIdx = parseInt(btn.dataset.optIdx);
+
+  // 同组内取消其他选中
+  btn.closest('.sku-options').querySelectorAll('.sku-btn').forEach(b=>{
+    b.classList.remove('active');
+  });
+  btn.classList.add('active');
+
+  // 记录选中
+  selectedSKUIndices[groupIdx] = optIdx;
+
+  // 视觉反馈：按钮点击波纹
+  btn.style.transform = 'scale(0.95)';
+  setTimeout(()=>{ btn.style.transform = ''; }, 120);
+
+  // 重算价格！
+  recalculatePrice();
+}
+
+// ── 价格计算引擎：base + Σ(delta) × qty ──
+function recalculatePrice(){
+  if(!currentProduct) return;
+
+  const basePrice = currentProduct.price;
+  const baseOriginal = currentProduct.priceOriginal || currentProduct.price;
+  let totalDelta = 0;
+
+  // 累加所有已选 SKU 差价
+  (currentProduct.skus||[]).forEach((sku, groupIdx) => {
+    const selIdx = selectedSKUIndices[groupIdx];
+    if(selIdx !== undefined && selIdx !== null && sku.options[selIdx]){
+      const opt = sku.options[selIdx];
+      totalDelta += (typeof opt === 'string') ? 0 : (opt.delta || 0);
+    }
+  });
+
+  // 数量
+  const qty = Math.max(1, parseInt(document.getElementById('qtyInput').value)||1);
+  const newPrice = Math.max(0, basePrice + totalDelta) * qty;
+  const newOriginal = Math.max(newPrice, baseOriginal + totalDelta) * qty;
+
+  // 更新 DOM
+  const priceNumEl = document.getElementById('priceNum');
+  const origEl = document.getElementById('priceOriginal');
+  const discEl = document.getElementById('priceDiscount');
+
+  // 价格变化动画
+  if(priceNumEl.textContent !== '—'){
+    priceNumEl.classList.add('price-flash');
+    setTimeout(()=>priceNumEl.classList.remove('price-flash'), 400);
+  }
+
+  priceNumEl.textContent = newPrice.toLocaleString();
+
+  if(baseOriginal > 0){
+    origEl.textContent = '¥'+newOriginal.toLocaleString();
+    const savings = newOriginal - newPrice;
+    if(savings > 0){
+      discEl.textContent = `省¥${savings.toLocaleString()}`;
+      discEl.style.display = 'inline-block';
+    } else {
+      discEl.style.display = 'none';
+    }
+  }
+
+  // 更新"立即购买"和"加入购物车"按钮中的价格提示
+  updateActionBtnsPrice(newPrice);
+}
+
+// ── 更新操作按钮上的价格显示 ──
+function updateActionBtnsPrice(currentTotal){
+  const buyBtn = document.querySelector('.btn-buy-now');
+  const cartBtn = document.querySelector('.btn-add-cart');
+  if(buyBtn){
+    // 在立即购买按钮上显示当前总价
+    buyBtn.dataset.price = currentTotal;
+    // 如果还没有 price-hint 就添加
+    if(!buyBtn.querySelector('.btn-price-hint')){
+      const hint = document.createElement('span');
+      hint.className = 'btn-price-hint';
+      hint.textContent = `¥${currentTotal.toLocaleString()}`;
+      hint.style.cssText = 'font-size:12px;opacity:0.8;margin-left:4px;font-weight:400;';
+      buyBtn.appendChild(hint);
+    } else {
+      buyBtn.querySelector('.btn-price-hint').textContent = `¥${currentTotal.toLocaleString()}`;
+    }
+  }
+  if(cartBtn && !cartBtn.querySelector('.btn-price-hint')){
+    const hint = document.createElement('span');
+    hint.className = 'btn-price-hint';
+    hint.textContent = `¥${currentTotal.toLocaleString()}`;
+    hint.style.cssText = 'font-size:11px;opacity:0.7;margin-left:3px;font-weight:400;';
+    cartBtn.appendChild(hint);
+  } else if(cartBtn) {
+    cartBtn.querySelector('.btn-price-hint').textContent = `¥${currentTotal.toLocaleString()}`;
+  }
+
+  // 同时更新 SKU 区域下方的已选配置汇总
+  renderSKUSummary(currentTotal);
+}
+
+// ── 已选配置汇总（仿淘宝底部） ──
+function renderSKUSummary(totalPrice){
+  let summaryEl = document.getElementById('skuSummary');
+  if(!summaryEl){
+    summaryEl = document.createElement('div');
+    summaryEl.id = 'skuSummary';
+    summaryEl.className='sku-summary-bar';
+    const skuSec = document.getElementById('skuSection');
+    if(skuSec) skuSec.parentNode.insertBefore(summaryEl, skuSec.nextSibling);
+  }
+
+  // 收集所有已选选项
+  const selections = [];
+  (currentProduct.skus||[]).forEach((sku, gi) => {
+    const si = selectedSKUIndices[gi];
+    if(si !== undefined && si !== null && sku.options[si]){
+      const opt = sku.options[si];
+      const txt = typeof opt === 'string' ? opt : (opt.text || '');
+      const delta = typeof opt === 'string' ? 0 : (opt.delta||0);
+      selections.push({
+        group: sku.label.split('/')[0].trim(),
+        text: txt,
+        delta: delta
+      });
+    }
+  });
+
+  const parts = selections.map(s =>
+    `<span class="sku-sel-item"><span class="sku-sel-group">${s.group}</span>: ${s.text}${s.delta>0?`<em>+¥${s.delta}</em>`:''}${s.delta<0?`<em>¥${s.delta}</em>`:''}</span>`
+  ).join('');
+
+  summaryEl.innerHTML = `
+    <div class="sku-sel-left">${parts || '<span style="color:var(--text-dim);font-size:12px">默认配置</span>'}</div>
+    <div class="sku-sel-right">
+      <span class="sku-sel-total-label">合计</span>
+      <span class="sku-sel-total-val">¥${totalPrice.toLocaleString()}</span>
+    </div>
+  `;
 }
 
 /* SPECS */
@@ -1613,16 +1861,30 @@ function addToCartCurrent(){
   if(!currentProduct) return;
   const qty = parseInt(document.getElementById('qtyInput').value) || 1;
   const sku = getSelectedSKU();
+
+  // 计算当前选中SKU的总价（与价格显示一致）
+  let totalDelta = 0;
+  (currentProduct.skus||[]).forEach((skuGroup, gi) => {
+    const si = selectedSKUIndices[gi];
+    if(si !== undefined && si !== null && skuGroup.options[si]){
+      const opt = skuGroup.options[si];
+      totalDelta += (typeof opt === 'string') ? 0 : (opt.delta || 0);
+    }
+  });
+  const currentUnitPrice = Math.max(0, currentProduct.price + totalDelta);
+  const currentTotal = currentUnitPrice * qty;
+
   const key = currentProduct.id + '|' + sku;
   const exist = cart.find(i => i.key === key);
-  if(exist){ exist.qty += qty; }
+  if(exist){ exist.qty += qty; exist.price = currentTotal; }
   else {
     cart.push({
       key, id: currentProduct.id, qty,
       nameZh: currentProduct.titleZh,
       nameEn: currentProduct.titleEn,
-      price: currentProduct.price,
-      img: (currentProduct.imagesFallback||[])[0]||'',
+      price: currentTotal,
+      unitPrice: currentUnitPrice,
+      img: (currentProduct.images&&currentProduct.images.length>0) ? currentProduct.images[0] : (currentProduct.imagesFallback||[])[0]||'',
       sku
     });
   }
@@ -1641,6 +1903,8 @@ function changeQty(d){
   let v = parseInt(inp.value)||1;
   v = Math.max(1, Math.min(999, v+d));
   inp.value = v;
+  // 数量变化也重算价格
+  recalculatePrice();
 }
 
 function toggleWishlist(){
