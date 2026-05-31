@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="zh" data-lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>产品详情 — JISHU / 集数科技</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-void: #030913;
+  --bg-deep: #060f1e;
+  --bg-mid: #0a1628;
+  --bg-card: rgba(10,22,48,0.85);
+  --neon-cyan: #00D4FF;
+  --neon-blue: #0066FF;
+  --neon-green: #00FF88;
+  --neon-purple: #7B2FFF;
+  --neon-gold: #FFB800;
+  --text-primary: #E8F4FF;
+  --text-secondary: #7BA3CC;
+  --text-dim: #3D6080;
+  --border-glow: rgba(0,212,255,0.3);
+  --border-active: rgba(0,212,255,0.8);
+  --glass: rgba(0,212,255,0.04);
+  --font-mono: 'Share Tech Mono', 'Courier New', monospace;
+  --font-hud: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', 'Noto Sans SC', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,0.015) 2px,rgba(0,212,255,0.015) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+#particleCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.4; }
+.grid-bg {
+  position: fixed; inset: 0;
+  background-image: linear-gradient(rgba(0,212,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.04) 1px,transparent 1px);
+  background-size: 60px 60px; z-index: 0; pointer-events: none;
+}
+[data-lang="zh"] .en-text { display: none !important; }
+[data-lang="en"] .zh-text { display: none !important; }
+.glow-cyan { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan), 0 0 20px rgba(0,212,255,0.5); }
+.glow-green { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); }
+
+/* ─── STATUS BAR ─── */
+.status-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 28px;
+  background: rgba(3,9,19,0.95); border-bottom: 1px solid rgba(0,212,255,0.15);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+  z-index: 200; font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
+  backdrop-filter: blur(10px);
+}
+.status-left,.status-right { display: flex; gap: 16px; align-items: center; }
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.dot-green { background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green); animation: blink 2s infinite; }
+.dot-cyan  { background: var(--neon-cyan);  box-shadow: 0 0 6px var(--neon-cyan); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ─── NAV ─── */
+.nav {
+  position: fixed; top: 28px; left: 0; right: 0; height: 64px;
+  background: rgba(6,15,30,0.95); border-bottom: 1px solid rgba(0,212,255,0.2);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
+  z-index: 100; backdrop-filter: blur(20px);
+}
+.nav-logo { font-family: var(--font-hud); font-size: 20px; font-weight: 900; letter-spacing: 3px; cursor: pointer; }
+.nav-logo span { color: var(--neon-cyan); }
+.nav-actions { display: flex; gap: 16px; align-items: center; }
+.nav-btn {
+  padding: 7px 18px; border: 1px solid var(--border-glow); background: var(--glass);
+  color: var(--text-secondary); font-family: var(--font-mono); font-size: 11px;
+  cursor: pointer; transition: all 0.3s; letter-spacing: 1px;
+  clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+}
+.nav-btn:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); box-shadow: 0 0 12px rgba(0,212,255,0.3); }
+.nav-btn.active { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0,212,255,0.08); }
+.lang-toggle {
+  width: 56px; height: 26px; background: rgba(0,212,255,0.1); border: 1px solid var(--border-glow);
+  border-radius: 13px; cursor: pointer; position: relative; display: flex; align-items: center;
+}
+.lang-toggle::after {
+  content: attr(data-label); font-family: var(--font-mono); font-size: 10px; color: var(--neon-cyan);
+  position: absolute; right: 8px; left: 8px; text-align: center; letter-spacing: 1px;
+}
+.cart-icon {
+  position: relative; width: 38px; height: 38px; border: 1px solid var(--border-glow);
+  background: var(--glass); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.3s;
+  clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+}
+.cart-icon:hover { border-color: var(--neon-cyan); box-shadow: 0 0 12px rgba(0,212,255,0.3); }
+.cart-count {
+  position: absolute; top: -6px; right: -6px; width: 18px; height: 18px;
+  background: var(--neon-cyan); color: #000; font-size: 10px; font-weight: 700;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+}
+
+/* ─── BREADCRUMB ─── */
+.breadcrumb {
+  margin-top: 92px; padding: 12px 32px;
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
+  display: flex; align-items: center; gap: 8px; position: relative; z-index: 10;
+}
+.breadcrumb a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+.breadcrumb a:hover { color: var(--neon-cyan); }
+.breadcrumb .sep { color: var(--neon-cyan); }
+
+/* ─── MAIN LAYOUT ─── */
+.product-main {
+  max-width: 1400px; margin: 0 auto; padding: 0 32px 60px;
+  position: relative; z-index: 10;
+}
+
+/* ─── PRODUCT TOP SECTION ─── */
+.product-top {
+  display: grid; grid-template-columns: 600px 1fr;
+  gap: 48px; margin-bottom: 60px;
+}
+
+/* ─── IMAGE GALLERY ─── */
+.gallery-wrap { position: sticky; top: 110px; align-self: start; }
+.main-image-box {
+  position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden;
+  border: 1px solid var(--border-glow); background: var(--bg-deep);
+  clip-path: polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
+  box-shadow: 0 0 40px rgba(0,212,255,0.1);
+}
+.main-image-box::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,212,255,0.05) 0%, transparent 50%, rgba(0,102,255,0.05) 100%);
+  z-index: 1; pointer-events: none;
+}
+.main-image-box img {
+  width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;
+  display: block;
+}
+.main-image-box:hover img { transform: scale(1.03); }
+.img-label {
+  position: absolute; top: 12px; left: 12px; z-index: 3;
+  background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4);
+  color: var(--neon-cyan); font-family: var(--font-mono); font-size: 10px;
+  padding: 3px 8px; letter-spacing: 1px;
+}
+.img-zoom-hint {
+  position: absolute; bottom: 12px; right: 12px; z-index: 3;
+  color: var(--text-dim); font-family: var(--font-mono); font-size: 9px;
+  display: flex; align-items: center; gap: 4px;
+}
+/* 主图翻页箭头 */
+.gallery-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+  width: 36px; height: 56px; background: rgba(3,9,19,0.7);
+  border: 1px solid var(--border-glow); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.3s; color: var(--text-secondary);
+}
+.gallery-arrow:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0,212,255,0.1); }
+.gallery-arrow.prev { left: 0; }
+.gallery-arrow.next { right: 0; }
+
+/* 缩略图列表 */
+.thumbs-row {
+  display: flex; gap: 8px; margin-top: 12px; padding: 4px 0;
+  overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--neon-cyan) transparent;
+}
+.thumb-item {
+  flex-shrink: 0; width: 80px; height: 80px; overflow: hidden;
+  border: 1px solid var(--border-glow); cursor: pointer; transition: all 0.3s;
+  clip-path: polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px);
+}
+.thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+.thumb-item:hover, .thumb-item.active {
+  border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0,212,255,0.4);
+}
+.thumb-item.active { outline: 2px solid var(--neon-cyan); }
+
+/* ─── PRODUCT INFO PANEL ─── */
+.info-panel { display: flex; flex-direction: column; gap: 24px; }
+
+.product-badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.badge {
+  padding: 3px 10px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px;
+  border: 1px solid; 
+}
+.badge-new { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0,255,136,0.08); }
+.badge-hot { border-color: var(--neon-gold); color: var(--neon-gold); background: rgba(255,184,0,0.08); }
+.badge-pro { border-color: var(--neon-purple); color: var(--neon-purple); background: rgba(123,47,255,0.08); }
+
+.product-title-zh {
+  font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1.4;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+.product-title-en {
+  font-family: var(--font-hud); font-size: 16px; font-weight: 700;
+  color: var(--neon-cyan); letter-spacing: 2px; margin-top: 4px;
+}
+.product-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+/* 评价栏 */
+.rating-row { display: flex; align-items: center; gap: 16px; }
+.stars { color: var(--neon-gold); font-size: 14px; letter-spacing: 2px; }
+.rating-num { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--neon-gold); }
+.review-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+.sold-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+
+/* 价格区 */
+.price-box {
+  background: var(--bg-deep); border: 1px solid rgba(0,212,255,0.15);
+  padding: 20px 24px; position: relative; overflow: hidden;
+  clip-path: polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+}
+.price-box::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+}
+.price-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 8px; }
+.price-current { display: flex; align-items: baseline; gap: 6px; }
+.price-currency { font-family: var(--font-hud); font-size: 20px; color: var(--neon-cyan); }
+.price-num { font-family: var(--font-hud); font-size: 44px; font-weight: 900; color: var(--neon-cyan); line-height: 1; text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+.price-original { font-family: var(--font-mono); font-size: 14px; color: var(--text-dim); text-decoration: line-through; margin-left: 8px; }
+.price-discount { background: rgba(255,184,0,0.15); border: 1px solid var(--neon-gold); color: var(--neon-gold); font-family: var(--font-mono); font-size: 11px; padding: 2px 8px; margin-left: 8px; }
+
+/* SKU选项 */
+.sku-section { display: flex; flex-direction: column; gap: 14px; }
+.sku-row { display: flex; flex-direction: column; gap: 8px; }
+.sku-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+.sku-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.sku-btn {
+  padding: 8px 16px; border: 1px solid var(--border-glow); background: var(--glass);
+  color: var(--text-secondary); font-family: var(--font-mono); font-size: 11px;
+  cursor: pointer; transition: all 0.3s; letter-spacing: 1px; white-space: nowrap;
+  clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+}
+.sku-btn:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+.sku-btn.active { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0,212,255,0.1); box-shadow: 0 0 8px rgba(0,212,255,0.2); }
+.sku-btn.disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* 数量选择 */
+.qty-row { display: flex; align-items: center; gap: 16px; }
+.qty-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+.qty-ctrl { display: flex; align-items: center; border: 1px solid var(--border-glow); }
+.qty-btn {
+  width: 36px; height: 36px; background: var(--glass); border: none;
+  color: var(--neon-cyan); font-size: 18px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.qty-btn:hover { background: rgba(0,212,255,0.15); }
+.qty-input {
+  width: 52px; height: 36px; background: transparent; border: none;
+  border-left: 1px solid var(--border-glow); border-right: 1px solid var(--border-glow);
+  color: var(--text-primary); font-family: var(--font-mono); font-size: 14px;
+  text-align: center; outline: none;
+}
+.qty-stock { font-family: var(--font-mono); font-size: 11px; color: var(--neon-green); }
+
+/* 购买按钮 */
+.action-row { display: flex; gap: 12px; }
+.btn-buy-now {
+  flex: 1; height: 52px; background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+  border: none; color: #000; font-family: var(--font-hud); font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.3s; letter-spacing: 2px;
+  clip-path: polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+  text-transform: uppercase;
+}
+.btn-buy-now:hover { box-shadow: 0 0 30px rgba(0,212,255,0.6); transform: translateY(-2px); }
+.btn-add-cart {
+  flex: 1; height: 52px; background: transparent;
+  border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
+  font-family: var(--font-hud); font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.3s; letter-spacing: 2px;
+  clip-path: polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+  text-transform: uppercase;
+}
+.btn-add-cart:hover { background: rgba(0,212,255,0.1); box-shadow: 0 0 20px rgba(0,212,255,0.3); transform: translateY(-2px); }
+.btn-wishlist {
+  width: 52px; height: 52px; border: 1px solid var(--border-glow); background: var(--glass);
+  color: var(--text-secondary); cursor: pointer; transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center;
+  clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  font-size: 18px;
+}
+.btn-wishlist:hover { border-color: #ff4466; color: #ff4466; box-shadow: 0 0 12px rgba(255,68,102,0.3); }
+.btn-wishlist.liked { border-color: #ff4466; color: #ff4466; background: rgba(255,68,102,0.1); }
+
+/* 配送/服务信息 */
+.service-row {
+  display: flex; flex-direction: column; gap: 10px;
+  border: 1px solid rgba(0,212,255,0.1); padding: 16px;
+  background: var(--bg-deep);
+  clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+}
+.service-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.service-icon { font-size: 16px; width: 24px; text-align: center; }
+.service-text { color: var(--text-secondary); }
+.service-text strong { color: var(--text-primary); }
+
+/* ─── TABS SECTION ─── */
+.tabs-section { margin-top: 8px; }
+.tab-bar {
+  display: flex; gap: 0; border-bottom: 1px solid rgba(0,212,255,0.2);
+  margin-bottom: 32px; position: relative;
+}
+.tab-item {
+  padding: 14px 28px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 2px;
+  color: var(--text-dim); cursor: pointer; transition: all 0.3s; text-transform: uppercase;
+  border-bottom: 2px solid transparent; margin-bottom: -1px; position: relative;
+}
+.tab-item:hover { color: var(--neon-cyan); }
+.tab-item.active { color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); }
+.tab-item.active::after {
+  content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
+  background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan);
+}
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ─── SPECS TABLE ─── */
+.specs-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2px; background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.15);
+}
+.specs-row {
+  display: contents;
+}
+.spec-key {
+  padding: 12px 16px; background: rgba(0,212,255,0.06);
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: 1px;
+  border-bottom: 1px solid rgba(0,212,255,0.08);
+}
+.spec-val {
+  padding: 12px 16px; background: var(--bg-deep);
+  font-size: 13px; color: var(--text-primary); border-bottom: 1px solid rgba(0,212,255,0.08);
+}
+.spec-val.highlight { color: var(--neon-cyan); font-family: var(--font-mono); }
+
+/* ─── DETAIL IMAGES ─── */
+.detail-images { display: flex; flex-direction: column; gap: 0; }
+.detail-img-item {
+  position: relative; width: 100%; overflow: hidden;
+  border: 1px solid rgba(0,212,255,0.08);
+}
+.detail-img-item img {
+  width: 100%; display: block; transition: opacity 0.3s;
+}
+.detail-img-placeholder {
+  width: 100%; min-height: 400px; background: var(--bg-deep);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  border: 1px dashed rgba(0,212,255,0.2);
+}
+.placeholder-icon { font-size: 48px; opacity: 0.2; }
+.placeholder-text { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: 2px; }
+
+/* ─── REVIEWS SECTION ─── */
+.review-summary {
+  display: flex; align-items: center; gap: 48px; padding: 24px;
+  background: var(--bg-deep); border: 1px solid rgba(0,212,255,0.15); margin-bottom: 24px;
+  clip-path: polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+}
+.review-big-score {
+  text-align: center;
+}
+.review-big-num { font-family: var(--font-hud); font-size: 64px; color: var(--neon-gold); line-height: 1; }
+.review-stars-big { color: var(--neon-gold); font-size: 20px; letter-spacing: 4px; }
+.review-total { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+.review-bars { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.bar-row { display: flex; align-items: center; gap: 12px; }
+.bar-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); width: 24px; }
+.bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-gold), var(--neon-cyan)); border-radius: 3px; }
+.bar-count { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); width: 28px; text-align: right; }
+
+.review-card {
+  padding: 20px; border: 1px solid rgba(0,212,255,0.1); background: var(--bg-deep);
+  margin-bottom: 12px;
+  clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+}
+.review-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.reviewer-avatar {
+  width: 38px; height: 38px; background: linear-gradient(135deg,var(--neon-blue),var(--neon-purple));
+  display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;
+  clip-path: polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
+}
+.reviewer-info .name { font-size: 14px; color: var(--text-primary); }
+.reviewer-info .meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); }
+.review-stars-sm { color: var(--neon-gold); font-size: 12px; }
+.review-body { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+.review-imgs { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.review-img { width: 80px; height: 80px; object-fit: cover; border: 1px solid var(--border-glow); cursor: pointer; }
+.review-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.review-tag { padding: 3px 8px; border: 1px solid rgba(0,212,255,0.2); font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); }
+
+/* ─── RELATED PRODUCTS ─── */
+.related-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+.related-card {
+  border: 1px solid var(--border-glow); background: var(--bg-card); cursor: pointer;
+  transition: all 0.3s; overflow: hidden;
+  clip-path: polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+}
+.related-card:hover { border-color: var(--neon-cyan); transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,212,255,0.2); }
+.related-img { width: 100%; aspect-ratio: 1/1; overflow: hidden; }
+.related-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.related-card:hover .related-img img { transform: scale(1.06); }
+.related-info { padding: 12px; }
+.related-title { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.4; }
+.related-price { font-family: var(--font-hud); font-size: 16px; color: var(--neon-cyan); }
+
+/* ─── SECTION HEADER ─── */
+.section-hd {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+}
+.section-hd-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0,212,255,0.5), transparent); }
+.section-hd-title {
+  font-family: var(--font-hud); font-size: 14px; color: var(--neon-cyan);
+  letter-spacing: 3px; text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0,212,255,0.5);
+}
+
+/* ─── TOAST ─── */
+.toast-container { position: fixed; top: 100px; right: 24px; z-index: 9998; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  padding: 12px 20px; background: rgba(6,15,30,0.95); border: 1px solid var(--border-glow);
+  color: var(--text-primary); font-family: var(--font-mono); font-size: 12px;
+  clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  backdrop-filter: blur(10px); animation: toast-in 0.3s ease;
+  display: flex; align-items: center; gap: 10px; min-width: 240px;
+  box-shadow: 0 0 20px rgba(0,212,255,0.15);
+}
+.toast.success { border-color: var(--neon-green); }
+.toast.error { border-color: #ff4466; }
+@keyframes toast-in { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+@keyframes toast-out { from { opacity:1; } to { opacity:0; transform: translateX(20px); } }
+
+/* ─── LIGHTBOX ─── */
+.lightbox {
+  position: fixed; inset: 0; z-index: 9990; background: rgba(3,9,19,0.95);
+  display: none; align-items: center; justify-content: center; padding: 40px;
+}
+.lightbox.open { display: flex; }
+.lightbox-img { max-width: 90vw; max-height: 85vh; object-fit: contain; border: 1px solid var(--border-glow); }
+.lightbox-close {
+  position: absolute; top: 20px; right: 20px; width: 44px; height: 44px;
+  border: 1px solid var(--border-glow); background: var(--glass); color: var(--text-secondary);
+  font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.lightbox-close:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+
+/* ─── FOOTER ─── */
+.footer {
+  position: relative; z-index: 10; background: var(--bg-deep);
+  border-top: 1px solid rgba(0,212,255,0.15); padding: 32px;
+  text-align: center; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
+}
+
+/* 滚动条 */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
+
+/* 响应式 */
+@media (max-width: 1100px) {
+  .product-top { grid-template-columns: 1fr; }
+  .gallery-wrap { position: static; }
+  .related-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 680px) {
+  .product-main { padding: 0 16px 40px; }
+  .nav { padding: 0 16px; }
+  .price-num { font-size: 32px; }
+  .action-row { flex-direction: column; }
+  .btn-buy-now, .btn-add-cart { height: 48px; }
+  .specs-grid { grid-template-columns: 1fr; }
+  .tab-item { padding: 12px 14px; font-size: 10px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+<div class="grid-bg"></div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="status-left">
+    <span><span class="dot dot-green"></span> SYSTEM ONLINE</span>
+    <span>JISHU / 集数科技</span>
+    <span class="en-text">PRODUCT DETAIL</span>
+    <span class="zh-text">产品详情</span>
+  </div>
+  <div class="status-right">
+    <span id="sysTime"></span>
+    <span>BUILD-2026</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" onclick="location.href='index.html'">
+    <span class="zh-text">集数</span><span class="en-text">JISHU</span>
+    <span style="color:var(--text-dim);font-weight:300"> / </span>
+    <span>TECH</span>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn" onclick="location.href='index.html'">
+      <span class="zh-text">◀ 返回商城</span>
+      <span class="en-text">◀ STORE</span>
+    </button>
+    <div class="lang-toggle" id="langBtn" data-label="中/EN" onclick="toggleLang()"></div>
+    <div class="cart-icon" onclick="location.href='index.html#cart'" title="购物车">
+      🛒<span class="cart-count" id="cartCount">0</span>
+    </div>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="index.html"><span class="zh-text">首页</span><span class="en-text">HOME</span></a>
+  <span class="sep">›</span>
+  <a href="index.html#products"><span class="zh-text">全部产品</span><span class="en-text">PRODUCTS</span></a>
+  <span class="sep">›</span>
+  <span id="breadcrumbName" style="color:var(--neon-cyan)">—</span>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+</div>
+
+<!-- MAIN -->
+<div class="product-main">
+
+  <!-- TOP: IMAGE + INFO -->
+  <div class="product-top">
+
+    <!-- LEFT: GALLERY -->
+    <div class="gallery-wrap">
+      <div class="main-image-box" id="mainImgBox">
+        <div class="img-label" id="imgIndexLabel">IMAGE 1/1</div>
+        <div class="img-zoom-hint">🔍 CLICK TO ZOOM</div>
+        <button class="gallery-arrow prev" onclick="galleryPrev()">‹</button>
+        <button class="gallery-arrow next" onclick="galleryNext()">›</button>
+        <img id="mainImg" src="" alt="产品主图" onclick="openLightbox(this.src)">
+      </div>
+      <div class="thumbs-row" id="thumbsRow"></div>
+    </div>
+
+    <!-- RIGHT: INFO -->
+    <div class="info-panel" id="infoPanel">
+      <div class="product-badge-row" id="badgeRow">
+        <span class="badge badge-new zh-text">新品</span>
+        <span class="badge badge-new en-text">NEW</span>
+        <span class="badge badge-pro">PRO</span>
+      </div>
+      <div>
+        <div class="product-title-zh zh-text" id="titleZh">—</div>
+        <div class="product-title-zh en-text" id="titleEn" style="font-family:var(--font-hud);font-size:18px;color:var(--text-primary)">—</div>
+        <div class="product-subtitle" id="subtitle"></div>
+      </div>
+      <div class="rating-row">
+        <span class="stars">★★★★★</span>
+        <span class="rating-num">4.9</span>
+        <span class="review-count zh-text">• 128条评价</span>
+        <span class="review-count en-text">• 128 Reviews</span>
+        <span class="sold-count zh-text">已售 <strong style="color:var(--neon-cyan)">2,300+</strong></span>
+        <span class="sold-count en-text">Sold <strong style="color:var(--neon-cyan)">2,300+</strong></span>
+      </div>
+      <div class="price-box">
+        <div class="price-label">
+          <span class="zh-text">当前价格 · CURRENT PRICE</span>
+          <span class="en-text">CURRENT PRICE</span>
+        </div>
+        <div class="price-current">
+          <span class="price-currency">¥</span>
+          <span class="price-num" id="priceNum">—</span>
+          <span class="price-original" id="priceOriginal"></span>
+          <span class="price-discount" id="priceDiscount" style="display:none"></span>
+        </div>
+      </div>
+
+      <!-- SKU -->
+      <div class="sku-section" id="skuSection"></div>
+
+      <!-- QTY -->
+      <div class="qty-row">
+        <span class="qty-label zh-text">数量</span>
+        <span class="qty-label en-text">QTY</span>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input class="qty-input" id="qtyInput" type="number" value="1" min="1" max="999">
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <span class="qty-stock zh-text">库存充足</span>
+        <span class="qty-stock en-text">In Stock</span>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="action-row">
+        <button class="btn-buy-now" onclick="buyNow()">
+          <span class="zh-text">立即购买</span>
+          <span class="en-text">BUY NOW</span>
+        </button>
+        <button class="btn-add-cart" onclick="addToCartCurrent()">
+          <span class="zh-text">加入购物车</span>
+          <span class="en-text">ADD TO CART</span>
+        </button>
+        <button class="btn-wishlist" id="wishlistBtn" onclick="toggleWishlist()" title="收藏">♡</button>
+      </div>
+
+      <!-- SERVICE -->
+      <div class="service-row">
+        <div class="service-item">
+          <span class="service-icon">🚀</span>
+          <span class="service-text zh-text"><strong>极速发货</strong> · 48小时内发出，全国顺丰包邮</span>
+          <span class="service-text en-text"><strong>Fast Shipping</strong> · Ships within 48h, free nationwide</span>
+        </div>
+        <div class="service-item">
+          <span class="service-icon">🛡️</span>
+          <span class="service-text zh-text"><strong>品质保障</strong> · 官方正品，假一赔十</span>
+          <span class="service-text en-text"><strong>Authentic</strong> · Official product, guaranteed genuine</span>
+        </div>
+        <div class="service-item">
+          <span class="service-icon">🔄</span>
+          <span class="service-text zh-text"><strong>7天退换</strong> · 无理由退换，支持全国联保</span>
+          <span class="service-text en-text"><strong>7-Day Return</strong> · No-reason return, nationwide warranty</span>
+        </div>
+        <div class="service-item">
+          <span class="service-icon">💬</span>
+          <span class="service-text zh-text"><strong>专属客服</strong> · 9:00–22:00 在线答疑</span>
+          <span class="service-text en-text"><strong>Support</strong> · Online 9AM–10PM</span>
+        </div>
+      </div>
+    </div><!-- /info-panel -->
+  </div><!-- /product-top -->
+
+  <!-- TABS -->
+  <div class="tabs-section">
+    <div class="tab-bar">
+      <div class="tab-item active" data-tab="detail" onclick="switchTab('detail')">
+        <span class="zh-text">图文详情</span><span class="en-text">DETAIL</span>
+      </div>
+      <div class="tab-item" data-tab="specs" onclick="switchTab('specs')">
+        <span class="zh-text">规格参数</span><span class="en-text">SPECS</span>
+      </div>
+      <div class="tab-item" data-tab="reviews" onclick="switchTab('reviews')">
+        <span class="zh-text">用户评价</span><span class="en-text">REVIEWS</span>
+      </div>
+      <div class="tab-item" data-tab="faq" onclick="switchTab('faq')">
+        <span class="zh-text">常见问题</span><span class="en-text">FAQ</span>
+      </div>
+    </div>
+
+    <!-- DETAIL TAB -->
+    <div class="tab-pane active" id="tab-detail">
+      <div class="detail-images" id="detailImages">
+        <!-- 详情图动态渲染 -->
+      </div>
+    </div>
+
+    <!-- SPECS TAB -->
+    <div class="tab-pane" id="tab-specs">
+      <div class="specs-grid" id="specsGrid"></div>
+    </div>
+
+    <!-- REVIEWS TAB -->
+    <div class="tab-pane" id="tab-reviews">
+      <div class="review-summary">
+        <div class="review-big-score">
+          <div class="review-big-num">4.9</div>
+          <div class="review-stars-big">★★★★★</div>
+          <div class="review-total zh-text">共 128 条</div>
+          <div class="review-total en-text">128 Reviews</div>
+        </div>
+        <div class="review-bars">
+          <div class="bar-row"><span class="bar-label">5★</span><div class="bar-track"><div class="bar-fill" style="width:88%"></div></div><span class="bar-count">113</span></div>
+          <div class="bar-row"><span class="bar-label">4★</span><div class="bar-track"><div class="bar-fill" style="width:8%"></div></div><span class="bar-count">10</span></div>
+          <div class="bar-row"><span class="bar-label">3★</span><div class="bar-track"><div class="bar-fill" style="width:3%"></div></div><span class="bar-count">4</span></div>
+          <div class="bar-row"><span class="bar-label">2★</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-count">1</span></div>
+          <div class="bar-row"><span class="bar-label">1★</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span class="bar-count">0</span></div>
+        </div>
+      </div>
+      <div id="reviewsList"></div>
+    </div>
+
+    <!-- FAQ TAB -->
+    <div class="tab-pane" id="tab-faq">
+      <div id="faqList"></div>
+    </div>
+  </div>
+
+  <!-- RELATED PRODUCTS -->
+  <div style="margin-top:60px">
+    <div class="section-hd">
+      <div class="section-hd-line"></div>
+      <div class="section-hd-title">
+        <span class="zh-text">相关推荐</span><span class="en-text">RELATED</span>
+      </div>
+      <div class="section-hd-line" style="background:linear-gradient(90deg,transparent,rgba(0,212,255,0.5))"></div>
+    </div>
+    <div class="related-grid" id="relatedGrid"></div>
+  </div>
+
+</div><!-- /product-main -->
+
+<div class="footer">
+  <span class="zh-text">© 2026 JISHU 集数科技 · 专注电脑硬件 · 保留所有权利</span>
+  <span class="en-text">© 2026 JISHU Tech · Dedicated to Computer Hardware · All Rights Reserved</span>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   PRODUCT DATA — 4款真实产品
+   图片占位符：用淘宝CDN格式（后续可替换真实图片URL）
+═══════════════════════════════════════════════════ */
+const PRODUCTS = [
+  {
+    id: "833511371800",
+    titleZh: "34英寸4K带鱼屏商用显示器 超宽曲面护眼屏 高色域IPS面板",
+    titleEn: "34\" 4K UltraWide Commercial Monitor — Curved IPS Panel",
+    subtitle: "JISHU-3400 · 集数科技专业显示器",
+    price: 2498,
+    priceOriginal: 3299,
+    badge: ["new", "hot"],
+    // 主图+副图（真实淘宝图片URL，后续可替换）
+    images: [
+      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_1_!!202112389.jpg",
+      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_2_!!202112389.jpg",
+      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_3_!!202112389.jpg",
+      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_4_!!202112389.jpg",
+      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_5_!!202112389.jpg",
+    ],
+    // 用Unsplash实景图作占位（赛博朋克风格显示器）
+    imagesFallback: [
+      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&q=80",
+      "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=600&q=80",
+      "https://images.unsplash.com/photo-1547954575-855750c57bd3?w=600&q=80",
+      "https://images.unsplash.com/photo-1625314868143-20e93ce3703c?w=600&q=80",
+      "https://images.unsplash.com/photo-1561883088-039e53143d73?w=600&q=80",
+    ],
+    specs: [
+      ["屏幕尺寸", "34英寸"],
+      ["分辨率", "3440×1440（4K 2K）"],
+      ["面板类型", "IPS（广视角）"],
+      ["刷新率", "75Hz"],
+      ["响应时间", "4ms（GTG）"],
+      ["色域覆盖", "sRGB 99% / DCI-P3 95%"],
+      ["色深", "10bit（8bit+FRC）"],
+      ["亮度", "350 cd/m²"],
+      ["对比度", "1000:1"],
+      ["曲率", "1500R"],
+      ["接口", "HDMI 2.0 ×2 / DP 1.4 ×1 / USB-A ×3"],
+      ["音频", "内置双5W立体声音箱"],
+      ["支架调节", "高度±40mm / 倾斜-3°~+15°"],
+      ["整机功耗", "≤45W"],
+      ["产品净重", "约7.2kg（含支架）"],
+      ["认证", "3C / CCC / CE / FCC"],
+    ],
+    skus: [
+      {
+        label: "颜色 / COLOR",
+        options: ["太空灰", "磨砂黑", "钛金白"]
+      },
+      {
+        label: "支架版本 / STAND",
+        options: ["标准支架", "升降支架（+¥299）", "壁挂版（不含支架）"]
+      }
+    ],
+    detailImages: [
+      { src: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=900&q=85", caption: "全局设计·整机外观" },
+      { src: "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=900&q=85", caption: "34英寸超宽视野" },
+      { src: "https://images.unsplash.com/photo-1547954575-855750c57bd3?w=900&q=85", caption: "IPS广色域面板" },
+      { src: "https://images.unsplash.com/photo-1625314868143-20e93ce3703c?w=900&q=85", caption: "丰富接口·一览无余" },
+    ],
+    reviews: [
+      { name:"王**",avatar:"王",score:5,sku:"太空灰/标准支架",date:"2026-05-12",text:"屏幕效果真的很惊艳！34寸宽屏打开Excel就是爽，色彩还原非常准，眼睛看了几小时也不累。客服也很贴心，安装时有问题秒回。强烈推荐！" },
+      { name:"张**",avatar:"张",score:5,sku:"磨砂黑/升降支架",date:"2026-04-28",text:"带鱼屏用起来效率真的提升很多，代码和设计图同时显示再也不用来回切了。画质比想象中好很多，值得入手。", imgs:["https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=120&q=70"] },
+      { name:"李**",avatar:"李",score:4,sku:"太空灰/标准支架",date:"2026-04-15",text:"整体满意，发货也很快。就是默认亮度偏高，调整一下就好了。屏幕本身做工很扎实，支架也稳。" },
+    ],
+    faq: [
+      { q:"支持Mac吗？", a:"完全支持macOS。通过USB-C转DP或HDMI连接，支持M1/M2/M3/M4全系MacBook和Mac mini，建议使用原装转接线以确保最佳效果。" },
+      { q:"自带音箱吗？", a:"是的，内置2×5W立体声音箱，日常办公完全够用。同时支持3.5mm音频输出连接外接音箱。" },
+      { q:"可以挂壁安装吗？", a:"支持VESA 100×100mm挂墙安装，选购壁挂版即可（不含支架）。" },
+      { q:"长时间使用眼睛会累吗？", a:"经过低蓝光+不闪屏认证，长时间使用护眼效果好。建议每1小时休息5-10分钟。" },
+    ]
+  },
+  {
+    id: "877707455171",
+    titleZh: "34英寸4K高刷独显一体机 AMD R7处理器+RX独立显卡 商用办公主机",
+    titleEn: "34\" 4K All-in-One PC — AMD R7 + Discrete GPU",
+    subtitle: "JISHU-3410 · 高性能商用一体机",
+    price: 2498,
+    priceOriginal: 3499,
+    badge: ["hot", "pro"],
+    imagesFallback: [
+      "https://images.unsplash.com/photo-1602849651488-0a64c7c28127?w=600&q=80",
+      "https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=600&q=80",
+      "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80",
+      "https://images.unsplash.com/photo-1612831455359-970e23a1e4e9?w=600&q=80",
+    ],
+    specs: [
+      ["整机类型", "一体机（All-in-One）"],
+      ["屏幕尺寸", "34英寸超宽曲面屏"],
+      ["分辨率", "3440×1440（4K宽屏）"],
+      ["处理器", "AMD Ryzen 7 5800H（8核16线程）"],
+      ["核心频率", "最高4.4GHz"],
+      ["显卡", "AMD RX 6600M（独立显卡）"],
+      ["显存", "8GB GDDR6"],
+      ["内存", "16GB DDR4 3200MHz（双通道）"],
+      ["存储", "512GB M.2 NVMe SSD（可扩展）"],
+      ["操作系统", "Windows 11 Pro（正版预装）"],
+      ["无线网络", "Wi-Fi 6（802.11ax）+ 蓝牙5.2"],
+      ["扩展接口", "USB 3.2×4 / USB-C×1 / HDMI-out×1 / RJ45"],
+      ["内置摄像头", "2K超清摄像头（支持人脸解锁）"],
+      ["内置音箱", "2×8W杜比全景声"],
+      ["整机尺寸", "约795×370×210mm"],
+      ["整机重量", "约12.5kg"],
+    ],
+    skus: [
+      {
+        label: "内存配置 / RAM",
+        options: ["16GB DDR4", "32GB DDR4（+¥499）", "64GB DDR4（+¥1299）"]
+      },
+      {
+        label: "存储配置 / STORAGE",
+        options: ["512GB SSD", "1TB SSD（+¥299）", "512GB+1TB（+¥599）"]
+      }
+    ],
+    detailImages: [
+      { src: "https://images.unsplash.com/photo-1602849651488-0a64c7c28127?w=900&q=85", caption: "一体机整机外观设计" },
+      { src: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=900&q=85", caption: "AMD Ryzen 7 高性能处理器" },
+      { src: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=900&q=85", caption: "RX 6600M 独立显卡性能" },
+    ],
+    reviews: [
+      { name:"赵**",avatar:"赵",score:5,sku:"32GB/1TB",date:"2026-05-20",text:"一体机外观非常高端，放在办公室直接提升整体格调。性能完全超出预期，跑多任务毫无压力。屏幕色彩准确，做设计完全够用！" },
+      { name:"孙**",avatar:"孙",score:5,sku:"16GB/512GB",date:"2026-05-01",text:"开机速度很快，开箱就能用，各种驱动都预装好了。屏幕非常大气，34寸一体机有点震撼。" },
+    ],
+    faq: [
+      { q:"内存可以后期升级吗？", a:"内存为标准DDR4 SO-DIMM规格，有2个扩展槽，可支持最高64GB。" },
+      { q:"支持Windows 11以外的系统吗？", a:"支持Linux（Ubuntu/Debian已测试），不建议降级到Windows 10。" },
+      { q:"发热大吗？", a:"采用双热管+双风扇散热方案，日常办公噪音<25dB，高负载下约38dB。" },
+    ]
+  },
+  {
+    id: "999162099112",
+    titleZh: "38英寸4K曲面显示器 超宽21:9 专业设计/影音娱乐商用显示屏",
+    titleEn: "38\" 4K Curved UltraWide Monitor — 21:9 Professional Display",
+    subtitle: "JISHU-3800 · 旗舰曲面显示器",
+    price: 4700,
+    priceOriginal: 5999,
+    badge: ["pro"],
+    imagesFallback: [
+      "https://images.unsplash.com/photo-1551645120-d70bfe84c826?w=600&q=80",
+      "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=600&q=80",
+      "https://images.unsplash.com/photo-1526657782461-9fe13402a841?w=600&q=80",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80",
+      "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=600&q=80",
+    ],
+    specs: [
+      ["屏幕尺寸", "38英寸"],
+      ["分辨率", "3840×1600（4K+）"],
+      ["面板类型", "IPS（广视角，专业级）"],
+      ["刷新率", "144Hz高刷"],
+      ["响应时间", "1ms（MPRT）"],
+      ["色域覆盖", "DCI-P3 98% / sRGB 131%"],
+      ["色深", "10bit真彩"],
+      ["亮度", "450 cd/m²（HDR10认证）"],
+      ["对比度", "1200:1（典型值）"],
+      ["曲率", "2300R"],
+      ["HDR支持", "HDR10 / DisplayHDR 400"],
+      ["接口", "HDMI 2.1 ×2 / DP 1.4 ×1 / USB-C 96W充电 / USB Hub"],
+      ["USB-C功率", "最高96W供电（兼容MacBook Pro）"],
+      ["音频", "内置2×5W + 独立低音炮"],
+      ["支架调节", "升降120mm / 倾斜 / 旋转 / 翻转"],
+      ["防护认证", "TÜV莱茵认证·护眼·低蓝光"],
+    ],
+    skus: [
+      {
+        label: "颜色 / COLOR",
+        options: ["磨砂黑", "星空灰"]
+      },
+      {
+        label: "支架 / STAND",
+        options: ["标准升降支架", "专业显示臂（+¥399）"]
+      }
+    ],
+    detailImages: [
+      { src: "https://images.unsplash.com/photo-1551645120-d70bfe84c826?w=900&q=85", caption: "38英寸旗舰曲面·沉浸视野" },
+      { src: "https://images.unsplash.com/photo-1526657782461-9fe13402a841?w=900&q=85", caption: "144Hz高刷·1ms响应" },
+      { src: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=900&q=85", caption: "DCI-P3 98%专业色域" },
+      { src: "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=900&q=85", caption: "USB-C 96W一线通·极简桌面" },
+    ],
+    reviews: [
+      { name:"吴**",avatar:"吴",score:5,sku:"磨砂黑/标准升降支架",date:"2026-05-18",text:"38寸曲面屏真的太爽了！4K+分辨率配上144Hz高刷，打游戏和做设计都是顶级体验。USB-C 96W充电直接给MacBook Pro充电，一根线搞定一切，简直完美！" },
+      { name:"陈**",avatar:"陈",score:5,sku:"星空灰/专业显示臂",date:"2026-05-05",text:"专业设计师强推！色彩准确到位，工作效率提升明显。支架调节超灵活，配上显示臂可以摆出各种角度。" },
+      { name:"郑**",avatar:"郑",score:4,sku:"磨砂黑/标准升降支架",date:"2026-04-22",text:"总体满意，屏幕素质非常高。就是包装有点大，拆箱需要2个人配合。价格稍贵但物有所值。" },
+    ],
+    faq: [
+      { q:"支持MacBook Pro直接连接吗？", a:"完全支持！通过USB-C接口连接，最高支持96W反向充电，可显示3840×1600分辨率，搭配M1/M2/M3/M4 Pro效果最佳。" },
+      { q:"能同时连接多台电脑吗？", a:"支持PBP（画中画）和PIP（分屏）功能，可同时显示2台电脑的画面。" },
+      { q:"HDR效果怎么样？", a:"支持HDR10，亮度450nit，高光细节表现优秀，适合看4K影视内容。" },
+    ]
+  },
+  {
+    id: "1032532537248",
+    titleZh: "32英寸2K曲面电脑显示器 165Hz高刷商用电竞显示屏 台式机专用",
+    titleEn: "32\" 2K 165Hz Curved Gaming Monitor — Commercial Display",
+    subtitle: "JISHU-3200G · 电竞商用两用显示器",
+    price: 1148,
+    priceOriginal: 1599,
+    badge: ["new", "hot"],
+    imagesFallback: [
+      "https://images.unsplash.com/photo-1586210579191-33b45e38fa2c?w=600&q=80",
+      "https://images.unsplash.com/photo-1625314868143-20e93ce3703c?w=600&q=80",
+      "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?w=600&q=80",
+      "https://images.unsplash.com/photo-1616763355603-9755a912a8e9?w=600&q=80",
+    ],
+    specs: [
+      ["屏幕尺寸", "32英寸"],
+      ["分辨率", "2560×1440（2K QHD）"],
+      ["面板类型", "VA（高对比度）"],
+      ["刷新率", "165Hz（最高）"],
+      ["响应时间", "1ms（MPRT）"],
+      ["色域覆盖", "sRGB 99% / NTSC 72%"],
+      ["色深", "8bit"],
+      ["亮度", "300 cd/m²"],
+      ["对比度", "3000:1（典型值，VA高对比优势）"],
+      ["曲率", "1500R曲面"],
+      ["同步技术", "FreeSync Premium / G-Sync Compatible"],
+      ["接口", "HDMI 2.0 ×2 / DP 1.4 ×1"],
+      ["音频输出", "耳机3.5mm音频输出"],
+      ["支架调节", "倾斜-3°~+15°"],
+      ["整机功耗", "≤35W"],
+      ["认证", "3C / 低蓝光认证"],
+    ],
+    skus: [
+      {
+        label: "颜色 / COLOR",
+        options: ["哑光黑", "暗夜灰"]
+      },
+      {
+        label: "刷新率解锁 / REFRESH",
+        options: ["标准版 144Hz", "超频版 165Hz（+¥100）"]
+      }
+    ],
+    detailImages: [
+      { src: "https://images.unsplash.com/photo-1586210579191-33b45e38fa2c?w=900&q=85", caption: "32英寸2K曲面·游戏/办公两用" },
+      { src: "https://images.unsplash.com/photo-1625314868143-20e93ce3703c?w=900&q=85", caption: "165Hz高刷率·丝滑流畅" },
+      { src: "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?w=900&q=85", caption: "1500R曲面包围感" },
+    ],
+    reviews: [
+      { name:"马**",avatar:"马",score:5,sku:"哑光黑/标准版",date:"2026-05-25",text:"入手第一款2K显示器，被画质惊艳到了！165Hz打游戏丝滑感拉满，办公也完全够用。价格超值，不到1200拿下2K+高刷，性价比爆棚！" },
+      { name:"周**",avatar:"周",score:5,sku:"暗夜灰/超频版",date:"2026-05-10",text:"32寸1500R曲面坐近了也有包围感，看视频很爽。2K分辨率字体清晰，眼睛舒服很多。" },
+    ],
+    faq: [
+      { q:"165Hz需要配置要求高吗？", a:"165Hz下需要至少GTX 1060 / RX 580级别显卡，通过DP 1.4连接开启最高刷新率。" },
+      { q:"支持G-Sync吗？", a:"通过G-Sync Compatible认证，兼容NVIDIA显卡（GTX 10系及以上）的自适应同步，需要在NVIDIA控制面板中开启。" },
+      { q:"可以竖置使用吗？", a:"默认不支持竖置，如需竖屏需另购显示臂（VESA 100×100mm）。" },
+    ]
+  },
+];
+
+/* ═══════════════════════════════════════
+   CART (与 index.html 共享 localStorage)
+═══════════════════════════════════════ */
+let cart = JSON.parse(localStorage.getItem('jishu_cart') || '[]');
+function saveCart(){ localStorage.setItem('jishu_cart', JSON.stringify(cart)); }
+function updateCartBadge(){
+  let total = cart.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartCount').textContent = total || 0;
+}
+
+/* ═══════════════════════════════════════
+   PRODUCT LOAD
+═══════════════════════════════════════ */
+let currentProduct = null;
+let currentImgIdx = 0;
+let currentImages = [];
+
+function getProductId(){
+  const params = new URLSearchParams(location.search);
+  return params.get('id') || PRODUCTS[0].id;
+}
+
+function loadProduct(pid){
+  currentProduct = PRODUCTS.find(p => p.id === pid) || PRODUCTS[0];
+  currentImages = currentProduct.imagesFallback || [];
+  currentImgIdx = 0;
+  renderProduct();
+}
+
+function renderProduct(){
+  const p = currentProduct;
+  document.title = p.titleZh + ' — JISHU 集数科技';
+  document.getElementById('breadcrumbName').textContent = p.titleZh.substring(0,20)+'…';
+  document.getElementById('titleZh').textContent = p.titleZh;
+  document.getElementById('titleEn').textContent = p.titleEn;
+  document.getElementById('subtitle').textContent = p.subtitle;
+  document.getElementById('priceNum').textContent = p.price.toLocaleString();
+
+  // 原价 & 折扣
+  if(p.priceOriginal){
+    document.getElementById('priceOriginal').textContent = '¥'+p.priceOriginal;
+    const pct = Math.round((1 - p.price/p.priceOriginal)*100);
+    const disc = document.getElementById('priceDiscount');
+    disc.textContent = `省¥${p.priceOriginal - p.price}`;
+    disc.style.display='inline-block';
+  }
+
+  // Badge
+  const br = document.getElementById('badgeRow');
+  br.innerHTML = '';
+  (p.badge||[]).forEach(b => {
+    const span = document.createElement('span');
+    if(b==='new'){ span.className='badge badge-new'; span.innerHTML='<span class="zh-text">新品</span><span class="en-text">NEW</span>'; }
+    else if(b==='hot'){ span.className='badge badge-hot'; span.innerHTML='<span class="zh-text">热卖</span><span class="en-text">HOT</span>'; }
+    else if(b==='pro'){ span.className='badge badge-pro'; span.innerHTML='PRO'; }
+    br.appendChild(span);
+  });
+
+  // 主图 + 副图
+  renderGallery();
+
+  // SKU
+  renderSkus();
+
+  // Specs
+  renderSpecs();
+
+  // Detail Images
+  renderDetailImages();
+
+  // Reviews
+  renderReviews();
+
+  // FAQ
+  renderFAQ();
+
+  // Related
+  renderRelated();
+
+  // Cart badge
+  updateCartBadge();
+}
+
+/* GALLERY */
+function renderGallery(){
+  const mainImg = document.getElementById('mainImg');
+  const thumbsRow = document.getElementById('thumbsRow');
+  
+  if(currentImages.length > 0){
+    mainImg.src = currentImages[0];
+    mainImg.onerror = () => { mainImg.src='https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&q=80'; };
+    document.getElementById('imgIndexLabel').textContent = `IMAGE 1/${currentImages.length}`;
+  }
+
+  thumbsRow.innerHTML='';
+  currentImages.forEach((src, i) => {
+    const div = document.createElement('div');
+    div.className='thumb-item'+(i===0?' active':'');
+    div.innerHTML=`<img src="${src}" alt="图${i+1}" onerror="this.src='https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=120&q=60'">`;
+    div.onclick=()=>switchMainImage(i);
+    thumbsRow.appendChild(div);
+  });
+}
+
+function switchMainImage(idx){
+  currentImgIdx = idx;
+  const mainImg = document.getElementById('mainImg');
+  mainImg.src = currentImages[idx];
+  document.getElementById('imgIndexLabel').textContent = `IMAGE ${idx+1}/${currentImages.length}`;
+  document.querySelectorAll('.thumb-item').forEach((t,i)=>{
+    t.classList.toggle('active', i===idx);
+  });
+}
+
+function galleryPrev(){
+  if(currentImages.length===0) return;
+  currentImgIdx = (currentImgIdx - 1 + currentImages.length) % currentImages.length;
+  switchMainImage(currentImgIdx);
+}
+function galleryNext(){
+  if(currentImages.length===0) return;
+  currentImgIdx = (currentImgIdx + 1) % currentImages.length;
+  switchMainImage(currentImgIdx);
+}
+
+function openLightbox(src){
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+/* SKU */
+function renderSkus(){
+  const wrap = document.getElementById('skuSection');
+  wrap.innerHTML='';
+  (currentProduct.skus||[]).forEach(sku => {
+    const row = document.createElement('div');
+    row.className='sku-row';
+    const label = document.createElement('div');
+    label.className='sku-label';
+    label.textContent = sku.label;
+    const opts = document.createElement('div');
+    opts.className='sku-options';
+    sku.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className='sku-btn'+(i===0?' active':'');
+      btn.textContent = opt;
+      btn.onclick = function(){
+        this.closest('.sku-options').querySelectorAll('.sku-btn').forEach(b=>b.classList.remove('active'));
+        this.classList.add('active');
+      };
+      opts.appendChild(btn);
+    });
+    row.appendChild(label);
+    row.appendChild(opts);
+    wrap.appendChild(row);
+  });
+}
+
+/* SPECS */
+function renderSpecs(){
+  const grid = document.getElementById('specsGrid');
+  grid.innerHTML='';
+  (currentProduct.specs||[]).forEach(([k,v]) => {
+    const key = document.createElement('div'); key.className='spec-key'; key.textContent=k;
+    const val = document.createElement('div'); val.className='spec-val'; val.textContent=v;
+    if(v.includes('Hz')||v.includes('4K')||v.includes('AMD')||v.includes('Intel')) val.classList.add('highlight');
+    grid.appendChild(key);
+    grid.appendChild(val);
+  });
+}
+
+/* DETAIL IMAGES */
+function renderDetailImages(){
+  const wrap = document.getElementById('detailImages');
+  wrap.innerHTML='';
+  const imgs = currentProduct.detailImages || [];
+  if(imgs.length === 0){
+    wrap.innerHTML='<div class="detail-img-placeholder"><div class="placeholder-icon">🖼️</div><div class="placeholder-text">DETAIL IMAGES LOADING...</div></div>';
+    return;
+  }
+  imgs.forEach(item => {
+    const div = document.createElement('div');
+    div.className='detail-img-item';
+    div.innerHTML=`
+      <img src="${item.src}" alt="${item.caption}" 
+        style="cursor:zoom-in" onclick="openLightbox(this.src)"
+        onerror="this.parentNode.style.display='none'">
+      <div style="padding:8px 16px;background:var(--bg-deep);font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:2px;border-top:1px solid rgba(0,212,255,0.1)">${item.caption}</div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+/* REVIEWS */
+function renderReviews(){
+  const wrap = document.getElementById('reviewsList');
+  wrap.innerHTML='';
+  (currentProduct.reviews||[]).forEach(rv => {
+    const div = document.createElement('div');
+    div.className='review-card';
+    const stars = '★'.repeat(rv.score) + '☆'.repeat(5-rv.score);
+    const imgs = (rv.imgs||[]).map(u=>`<img class="review-img" src="${u}" onclick="openLightbox(this.src)" alt="评价图">`).join('');
+    div.innerHTML=`
+      <div class="review-header">
+        <div class="reviewer-avatar">${rv.avatar}</div>
+        <div class="reviewer-info">
+          <div class="name">${rv.name}</div>
+          <div class="meta"><span class="review-stars-sm">${stars}</span> · ${rv.sku||''} · ${rv.date}</div>
+        </div>
+      </div>
+      <div class="review-body">${rv.text}</div>
+      ${imgs?`<div class="review-imgs">${imgs}</div>`:''}
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+/* FAQ */
+function renderFAQ(){
+  const wrap = document.getElementById('faqList');
+  wrap.innerHTML='';
+  (currentProduct.faq||[]).forEach((item,i) => {
+    const div = document.createElement('div');
+    div.style.cssText='margin-bottom:16px;border:1px solid rgba(0,212,255,0.12);overflow:hidden;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)';
+    div.innerHTML=`
+      <div style="padding:14px 20px;background:rgba(0,212,255,0.05);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:12px;color:var(--neon-cyan)" onclick="toggleFAQ(${i})">
+        <span>Q${i+1}. ${item.q}</span>
+        <span id="faq-icon-${i}" style="transition:transform 0.3s">▼</span>
+      </div>
+      <div id="faq-body-${i}" style="padding:14px 20px;font-size:13px;color:var(--text-secondary);line-height:1.7;display:none">${item.a}</div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+function toggleFAQ(i){
+  const body = document.getElementById(`faq-body-${i}`);
+  const icon = document.getElementById(`faq-icon-${i}`);
+  const open = body.style.display==='none';
+  body.style.display = open ? 'block' : 'none';
+  icon.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+/* RELATED */
+function renderRelated(){
+  const wrap = document.getElementById('relatedGrid');
+  wrap.innerHTML='';
+  PRODUCTS.filter(p => p.id !== currentProduct.id).forEach(p => {
+    const div = document.createElement('div');
+    div.className='related-card';
+    div.onclick = () => { window.location.href=`product.html?id=${p.id}`; };
+    const img = (p.imagesFallback||[])[0] || '';
+    div.innerHTML=`
+      <div class="related-img"><img src="${img}" alt="${p.titleZh}" onerror="this.src='https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300&q=60'"></div>
+      <div class="related-info">
+        <div class="related-title zh-text">${p.titleZh.substring(0,30)}…</div>
+        <div class="related-title en-text">${p.titleEn.substring(0,30)}…</div>
+        <div class="related-price">¥${p.price.toLocaleString()}</div>
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+/* ═══════════════════════════════════════
+   CART ACTIONS
+═══════════════════════════════════════ */
+function getSelectedSKU(){
+  const labels = [];
+  document.querySelectorAll('#skuSection .sku-row').forEach(row => {
+    const lbl = row.querySelector('.sku-label')?.textContent || '';
+    const sel = row.querySelector('.sku-btn.active')?.textContent || '';
+    if(sel) labels.push(sel);
+  });
+  return labels.join(' / ');
+}
+
+function addToCartCurrent(){
+  if(!currentProduct) return;
+  const qty = parseInt(document.getElementById('qtyInput').value) || 1;
+  const sku = getSelectedSKU();
+  const key = currentProduct.id + '|' + sku;
+  const exist = cart.find(i => i.key === key);
+  if(exist){ exist.qty += qty; }
+  else {
+    cart.push({
+      key, id: currentProduct.id, qty,
+      nameZh: currentProduct.titleZh,
+      nameEn: currentProduct.titleEn,
+      price: currentProduct.price,
+      img: (currentProduct.imagesFallback||[])[0]||'',
+      sku
+    });
+  }
+  saveCart();
+  updateCartBadge();
+  showToast('success', '✅ 已加入购物车！');
+}
+
+function buyNow(){
+  addToCartCurrent();
+  setTimeout(() => { location.href = 'index.html#cart'; }, 500);
+}
+
+function changeQty(d){
+  const inp = document.getElementById('qtyInput');
+  let v = parseInt(inp.value)||1;
+  v = Math.max(1, Math.min(999, v+d));
+  inp.value = v;
+}
+
+function toggleWishlist(){
+  const btn = document.getElementById('wishlistBtn');
+  const liked = btn.classList.toggle('liked');
+  btn.textContent = liked ? '♥' : '♡';
+  showToast(liked ? 'success' : '', liked ? '❤️ 已加入心愿单' : '已取消收藏');
+}
+
+/* ═══════════════════════════════════════
+   TABS
+═══════════════════════════════════════ */
+function switchTab(name){
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id==='tab-'+name));
+}
+
+/* ═══════════════════════════════════════
+   LANG
+═══════════════════════════════════════ */
+function toggleLang(){
+  const html = document.documentElement;
+  const isZh = html.dataset.lang === 'zh';
+  html.dataset.lang = isZh ? 'en' : 'zh';
+  document.getElementById('langBtn').dataset.label = isZh ? 'EN/中' : '中/EN';
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+function showToast(type, msg){
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type||'');
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(()=>{
+    t.style.animation='toast-out 0.3s ease forwards';
+    setTimeout(()=>t.remove(), 300);
+  }, 2800);
+}
+
+/* ═══════════════════════════════════════
+   PARTICLE CANVAS
+═══════════════════════════════════════ */
+(function initParticles(){
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let W=0,H=0,particles=[];
+  const resize=()=>{W=canvas.width=innerWidth;H=canvas.height=innerHeight;};
+  resize(); window.addEventListener('resize',resize);
+  for(let i=0;i<80;i++) particles.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*1.5+0.5,alpha:Math.random()*0.5+0.2});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,212,255,${p.alpha})`; ctx.fill();
+    });
+    particles.forEach((a,i)=>{
+      particles.slice(i+1).forEach(b=>{
+        const d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<100){ ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.strokeStyle=`rgba(0,212,255,${(1-d/100)*0.12})`; ctx.lineWidth=0.5; ctx.stroke(); }
+      });
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ═══════════════════════════════════════
+   SYSTEM TIME
+═══════════════════════════════════════ */
+function updateTime(){
+  const now = new Date();
+  document.getElementById('sysTime').textContent = now.toLocaleTimeString('zh-CN',{hour12:false});
+}
+setInterval(updateTime, 1000); updateTime();
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const pid = getProductId();
+  loadProduct(pid);
+});
+
+// 同时也在 index.html 中把产品卡片的链接更新到 product.html?id=xxx
+// 让用户点击产品卡片能跳转到详情页
+</script>
+</body>
+</html>
