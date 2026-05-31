@@ -839,7 +839,17 @@ const PRODUCTS = [
     price: 2498,
     priceOriginal: 3499,
     badge: ["hot", "pro"],
-    images: [],
+    // ── 淘宝真实主图/副图（Gallery 轮播） ──
+    images: [
+      "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01wpuCSq1wxLV3RyjAA_!!4126786374.jpg",
+      "https://gw.alicdn.com/imgextra/O1CN01n1WE5j1wxLdZatQc9_!!4126786374.png",
+      "https://gw.alicdn.com/imgextra/O1CN01lBMLDK1wxLVtBcQlB_!!4126786374.png",
+      "https://gw.alicdn.com/imgextra/O1CN01ypzVdN1wxLVqQUDTs_!!4126786374.png",
+      "https://gw.alicdn.com/imgextra/O1CN01yHaK4D1wxLVsCdLUC_!!4126786374.png",
+      "https://gw.alicdn.com/imgextra/O1CN01E00Z9N1wxLVqQSXXE_!!4126786374.png",
+      "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01Li8sGi1wxLVpBRfAP_!!4126786374.jpg",
+      "https://img.alicdn.com/imgextra/i2/4126786374/O1CN018Cizkl1wxLVr437E8_!!4126786374.jpg",
+    ],
     get imagesFallback(){
       return [
         makeSVGImg('34" 4K 独显一体机', '#030913', '#05101e'),
@@ -876,11 +886,20 @@ const PRODUCTS = [
     ],
     get detailImages(){
       return [
-        { src: makeSVGImg('整机正面 · 34寸独显一体机', '#030913', '#05101e'), caption: "整机正面 · 34英寸游戏一体机" },
-        { src: makeSVGImg('RX 6600M 8G独显', '#030913', '#080815'), caption: "AMD RX 6600M 独立显卡 · 8GB GDDR6显存" },
-        { src: makeSVGImg('144Hz 准4K · 流畅电竞', '#030913', '#05101e'), caption: "144Hz 高刷 + 1ms 响应 · 电竞流畅体验" },
-        { src: makeSVGImg('Ryzen 7 5800H 高性能CPU', '#030913', '#080815'), caption: "AMD Ryzen 7 5800H · 8核16线程算力" },
-        { src: makeSVGImg('杜比全景声 2×8W 音箱', '#030913', '#05101e'), caption: "内置杜比全景声双8W音箱" },
+        // ── 淘宝真实详情图（卖家4126786374） ──
+        { src: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01LH2ZtY1wxLVszJB1v_!!4126786374.png", caption: "产品整体展示 · 全貌" },
+        { src: "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01AbD5RY1wxLVtC8eja_!!4126786374.png", caption: "屏幕细节 · 显示效果" },
+        { src: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01ivmbHY1wxLVqRHIJ4_!!4126786374.png", caption: "接口配置 · 扩展能力" },
+        { src: "https://img.alicdn.com/imgextra/i4/4126786374/O1CN01YSRx2g1wxLVo8kmJz_!!4126786374.png", caption: "支架设计 · 人体工学" },
+        { src: "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01zMVW1U1wxLVqRIV8m_!!4126786374.png", caption: "性能参数 · 处理器/显卡" },
+        { src: "https://img.alicdn.com/imgextra/i4/4126786374/O1CN01YKLZMs1wxLVpBljZO_!!4126786374.png", caption: "内存存储 · 扩展空间" },
+        { src: "https://img.alicdn.com/imgextra/i1/4126786374/O1CN01GBf30V1wxLVqYCXsJ_!!4126786374.png", caption: "散热系统 · 静音设计" },
+        { src: "https://img.alicdn.com/imgextra/i1/4126786374/O1CN01H78gTW1wxLVtm0xEN_!!4126786374.png", caption: "音响系统 · 音质体验" },
+        { src: "https://img.alicdn.com/imgextra/i4/4126786374/O1CN01BfaPae1wxLVo8nC1q_!!4126786374.png", caption: "外观工艺 · 细节质感" },
+        { src: "https://img.alicdn.com/imgextra/i1/4126786374/O1CN01E2cG0Q1wxLVszIAfF_!!4126786374.png", caption: "使用场景 · 办公/游戏/娱乐" },
+        { src: "https://img.alicdn.com/imgextra/i4/4126786374/O1CN0141pmXO1wxLVjgvu7u_!!4126786374.png", caption: "包装清单 · 配件一览" },
+        { src: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01tPR9ix1wxLVszJB3c_!!4126786374.png", caption: "售后服务 · 品质保障" },
+        { src: "https://img.alicdn.com/imgextra/i1/4126786374/O1CN01Es3Fs41wxLVpBj7PP_!!4126786374.png", caption: "用户实拍 · 真实反馈" },
       ];
     },
     reviews: [
@@ -1121,7 +1140,7 @@ function renderGallery(){
   
   if(currentImages.length > 0){
     mainImg.src = currentImages[0];
-    mainImg.onerror = () => { mainImg.src='https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&q=80'; };
+    mainImg.onerror = () => { if(currentProduct.imagesFallback && currentProduct.imagesFallback.length > 0){ mainImg.src = currentProduct.imagesFallback[0]; } };
     document.getElementById('imgIndexLabel').textContent = `IMAGE 1/${currentImages.length}`;
   }
 
@@ -1129,7 +1148,8 @@ function renderGallery(){
   currentImages.forEach((src, i) => {
     const div = document.createElement('div');
     div.className='thumb-item'+(i===0?' active':'');
-    div.innerHTML=`<img src="${src}" alt="图${i+1}" onerror="this.src='https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=120&q=60'">`;
+    const fallbackSrc = (currentProduct.imagesFallback && currentProduct.imagesFallback[i]) || (currentProduct.imagesFallback && currentProduct.imagesFallback[0]) || '';
+    div.innerHTML=`<img src="${src}" alt="图${i+1}" onerror="if('${fallbackSrc}')this.src='${fallbackSrc}'">`;
     div.onclick=()=>switchMainImage(i);
     thumbsRow.appendChild(div);
   });
@@ -1284,9 +1304,10 @@ function renderRelated(){
     const div = document.createElement('div');
     div.className='related-card';
     div.onclick = () => { window.location.href=`product.html?id=${p.id}`; };
-    const img = (p.imagesFallback||[])[0] || '';
+    const img = (p.images&&p.images.length>0) ? p.images[0] : (p.imagesFallback||[])[0] || '';
+    const fallbackImg = (p.imagesFallback||[])[0] || '';
     div.innerHTML=`
-      <div class="related-img"><img src="${img}" alt="${p.titleZh}" onerror="this.src='https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300&q=60'"></div>
+      <div class="related-img"><img src="${img}" alt="${p.titleZh}" onerror="if('${fallbackImg}')this.src='${fallbackImg}'"></div>
       <div class="related-info">
         <div class="related-title zh-text">${p.titleZh.substring(0,30)}…</div>
         <div class="related-title en-text">${p.titleEn.substring(0,30)}…</div>
