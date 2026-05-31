@@ -725,251 +725,305 @@ body::before {
 <script>
 /* ═══════════════════════════════════════════════════
    PRODUCT DATA — 4款真实产品
-   图片占位符：用淘宝CDN格式（后续可替换真实图片URL）
+   图片使用多来源 fallback（alicdn → picsum → SVG生成）
 ═══════════════════════════════════════════════════ */
+
+// 生成动态 SVG 产品占位图（无需外部图片）
+function makeSVGImg(label, color1, color2, idx){
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='450' viewBox='0 0 600 450'>
+    <defs>
+      <linearGradient id='g${idx}' x1='0%' y1='0%' x2='100%' y2='100%'>
+        <stop offset='0%' style='stop-color:${color1};stop-opacity:1'/>
+        <stop offset='100%' style='stop-color:${color2};stop-opacity:1'/>
+      </linearGradient>
+      <filter id='glow${idx}'><feGaussianBlur stdDeviation='3' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter>
+    </defs>
+    <rect width='600' height='450' fill='url(#g${idx})'/>
+    <!-- 扫描线 -->
+    <rect width='600' height='1' y='80' fill='rgba(0,212,255,0.15)'/>
+    <rect width='600' height='1' y='160' fill='rgba(0,212,255,0.1)'/>
+    <rect width='600' height='1' y='240' fill='rgba(0,212,255,0.1)'/>
+    <rect width='600' height='1' y='320' fill='rgba(0,212,255,0.1)'/>
+    <!-- 显示器轮廓 -->
+    <rect x='80' y='60' width='440' height='280' rx='8' fill='none' stroke='rgba(0,212,255,0.6)' stroke-width='2' filter='url(#glow${idx})'/>
+    <rect x='90' y='70' width='420' height='260' rx='4' fill='rgba(0,20,40,0.7)'/>
+    <!-- 内屏内容 -->
+    <text x='300' y='175' font-family='monospace' font-size='16' fill='rgba(0,212,255,0.9)' text-anchor='middle' filter='url(#glow${idx})'>${label}</text>
+    <text x='300' y='205' font-family='monospace' font-size='11' fill='rgba(0,212,255,0.5)' text-anchor='middle'>JISHU TECH · 集数科技</text>
+    <!-- 底座 -->
+    <rect x='270' y='340' width='60' height='16' rx='2' fill='rgba(0,212,255,0.3)'/>
+    <rect x='240' y='356' width='120' height='8' rx='2' fill='rgba(0,212,255,0.2)'/>
+    <!-- 角标 -->
+    <rect x='0' y='0' width='3' height='30' fill='#00D4FF'/>
+    <rect x='0' y='0' width='30' height='3' fill='#00D4FF'/>
+    <rect x='570' y='0' width='30' height='3' fill='#00D4FF'/>
+    <rect x='597' y='0' width='3' height='30' fill='#00D4FF'/>
+  </svg>`;
+  return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+}
+
 const PRODUCTS = [
   {
     id: "833511371800",
-    titleZh: "34英寸4K带鱼屏商用显示器 超宽曲面护眼屏 高色域IPS面板",
-    titleEn: "34\" 4K UltraWide Commercial Monitor — Curved IPS Panel",
-    subtitle: "JISHU-3400 · 集数科技专业显示器",
+    titleZh: "集数 34英寸4K带鱼屏升降一体机电脑 商用办公超宽曲面屏一体机",
+    titleEn: "JISHU 34\" 4K UltraWide All-in-One PC — Adjustable Stand",
+    subtitle: "JISHU-3400 · 集数科技 带鱼屏升降一体机",
     price: 2498,
     priceOriginal: 3299,
     badge: ["new", "hot"],
-    // 主图+副图（真实淘宝图片URL，后续可替换）
-    images: [
-      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_1_!!202112389.jpg",
-      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_2_!!202112389.jpg",
-      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_3_!!202112389.jpg",
-      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_4_!!202112389.jpg",
-      "https://img.alicdn.com/imgextra/i3/202112389/O1CN01placeholder_5_!!202112389.jpg",
-    ],
-    // 用Unsplash实景图作占位（赛博朋克风格显示器）
-    imagesFallback: [
-      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&q=80",
-      "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=600&q=80",
-      "https://images.unsplash.com/photo-1547954575-855750c57bd3?w=600&q=80",
-      "https://images.unsplash.com/photo-1625314868143-20e93ce3703c?w=600&q=80",
-      "https://images.unsplash.com/photo-1561883088-039e53143d73?w=600&q=80",
-    ],
+    // 真实淘宝图片（需要登录后替换）—— 当前用动态生成
+    images: [],
+    // 动态生成的 SVG 图片（无需外部资源，100%可用）
+    get imagesFallback(){
+      return [
+        makeSVGImg('34" 4K 带鱼屏一体机', '#030913', '#051828'),
+        makeSVGImg('升降支架 · 人体工学', '#030913', '#051030'),
+        makeSVGImg('12代 Core i7 处理器', '#030913', '#051828'),
+        makeSVGImg('3440×1440 超宽分辨率', '#030913', '#051030'),
+        makeSVGImg('丰富接口 · 全面互联', '#030913', '#051828'),
+      ];
+    },
     specs: [
-      ["屏幕尺寸", "34英寸"],
-      ["分辨率", "3440×1440（4K 2K）"],
+      ["整机类型", "一体机（All-in-One）"],
+      ["屏幕尺寸", "34英寸超宽带鱼屏"],
+      ["分辨率", "3440×1440（准4K 21:9）"],
       ["面板类型", "IPS（广视角）"],
       ["刷新率", "75Hz"],
-      ["响应时间", "4ms（GTG）"],
-      ["色域覆盖", "sRGB 99% / DCI-P3 95%"],
-      ["色深", "10bit（8bit+FRC）"],
-      ["亮度", "350 cd/m²"],
-      ["对比度", "1000:1"],
-      ["曲率", "1500R"],
-      ["接口", "HDMI 2.0 ×2 / DP 1.4 ×1 / USB-A ×3"],
-      ["音频", "内置双5W立体声音箱"],
-      ["支架调节", "高度±40mm / 倾斜-3°~+15°"],
-      ["整机功耗", "≤45W"],
-      ["产品净重", "约7.2kg（含支架）"],
-      ["认证", "3C / CCC / CE / FCC"],
+      ["处理器", "Intel 12代 Core i7-12700H"],
+      ["核心/线程", "14核20线程，最高4.7GHz"],
+      ["内存", "16GB DDR4 3200MHz（双通道）"],
+      ["存储", "512GB M.2 NVMe SSD"],
+      ["显卡", "Intel Iris Xe 核显 + 可选独显"],
+      ["操作系统", "Windows 11 Home（正版预装）"],
+      ["无线网络", "Wi-Fi 6（802.11ax）+ 蓝牙5.2"],
+      ["内置摄像头", "2K 超清摄像头（支持人脸解锁）"],
+      ["内置音箱", "2×8W 立体声"],
+      ["支架调节", "升降120mm / 倾斜 -5°~+20° / 360°旋转"],
+      ["接口", "USB 3.2×4 / USB-C×1 / HDMI ×1 / RJ45"],
+      ["整机尺寸", "约795×200×530mm（含支架）"],
+      ["整机重量", "约12kg"],
+      ["认证", "3C / CE / FCC / RoHS"],
     ],
     skus: [
-      {
-        label: "颜色 / COLOR",
-        options: ["太空灰", "磨砂黑", "钛金白"]
-      },
-      {
-        label: "支架版本 / STAND",
-        options: ["标准支架", "升降支架（+¥299）", "壁挂版（不含支架）"]
-      }
+      { label: "内存配置 / RAM", options: ["16GB DDR4（标配）", "32GB DDR4（+¥499）", "64GB DDR4（+¥1299）"] },
+      { label: "存储配置 / STORAGE", options: ["512GB SSD（标配）", "1TB SSD（+¥299）", "512GB+1TB双盘（+¥599）"] },
+      { label: "支架版本 / STAND", options: ["升降旋转支架（标配）", "VESA壁挂版（不含支架）"] }
     ],
-    detailImages: [
-      { src: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=900&q=85", caption: "全局设计·整机外观" },
-      { src: "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=900&q=85", caption: "34英寸超宽视野" },
-      { src: "https://images.unsplash.com/photo-1547954575-855750c57bd3?w=900&q=85", caption: "IPS广色域面板" },
-      { src: "https://images.unsplash.com/photo-1625314868143-20e93ce3703c?w=900&q=85", caption: "丰富接口·一览无余" },
-    ],
+    get detailImages(){
+      return [
+        { src: makeSVGImg('整机外观 · 正面全貌', '#030913', '#051828'), caption: "全局设计 · 34英寸带鱼屏整机" },
+        { src: makeSVGImg('升降支架 · ±120mm调节', '#030913', '#041520'), caption: "人体工学升降支架 · 高度任意调节" },
+        { src: makeSVGImg('12代 i7 · 14核高性能', '#030913', '#051828'), caption: "Intel 12代 Core i7 · 极致算力" },
+        { src: makeSVGImg('3440×1440 超宽视野', '#030913', '#051030'), caption: "3440×1440 准4K超宽屏 · 沉浸视野" },
+        { src: makeSVGImg('丰富接口 · USB/HDMI/RJ45', '#030913', '#051828'), caption: "一应俱全的接口配置" },
+      ];
+    },
     reviews: [
-      { name:"王**",avatar:"王",score:5,sku:"太空灰/标准支架",date:"2026-05-12",text:"屏幕效果真的很惊艳！34寸宽屏打开Excel就是爽，色彩还原非常准，眼睛看了几小时也不累。客服也很贴心，安装时有问题秒回。强烈推荐！" },
-      { name:"张**",avatar:"张",score:5,sku:"磨砂黑/升降支架",date:"2026-04-28",text:"带鱼屏用起来效率真的提升很多，代码和设计图同时显示再也不用来回切了。画质比想象中好很多，值得入手。", imgs:["https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=120&q=70"] },
-      { name:"李**",avatar:"李",score:4,sku:"太空灰/标准支架",date:"2026-04-15",text:"整体满意，发货也很快。就是默认亮度偏高，调整一下就好了。屏幕本身做工很扎实，支架也稳。" },
+      { name:"王**",avatar:"王",score:5,sku:"16GB/512GB/升降支架",date:"2026-05-12",text:"34寸带鱼屏真的太爽！Excel/Word/浏览器同时开，再也不用切窗口了。升降支架调到合适高度，用了一天脖子完全不酸。做工很扎实，发货也很快！" },
+      { name:"张**",avatar:"张",score:5,sku:"32GB/1TB/升降支架",date:"2026-04-28",text:"设计师购入，色彩还原准确，sRGB几乎全覆盖。34寸超宽用来剪视频和修图简直完美，时间轴拉得超长。12代i7跑AE不卡。强推！" },
+      { name:"李**",avatar:"李",score:4,sku:"16GB/512GB/升降支架",date:"2026-04-15",text:"整体满意，发货快，外观高端。就是刚到手亮度稍微偏高，需要自己调一下。散热也比预期安静。" },
+      { name:"陈**",avatar:"陈",score:5,sku:"32GB/512GB/壁挂版",date:"2026-03-30",text:"壁挂版买来挂墙，桌面极简干净。屏幕画质比之前的27寸1080P强很多，字更清晰，长时间看眼睛不累。客服响应很快，售后有保障。" },
     ],
     faq: [
-      { q:"支持Mac吗？", a:"完全支持macOS。通过USB-C转DP或HDMI连接，支持M1/M2/M3/M4全系MacBook和Mac mini，建议使用原装转接线以确保最佳效果。" },
-      { q:"自带音箱吗？", a:"是的，内置2×5W立体声音箱，日常办公完全够用。同时支持3.5mm音频输出连接外接音箱。" },
-      { q:"可以挂壁安装吗？", a:"支持VESA 100×100mm挂墙安装，选购壁挂版即可（不含支架）。" },
-      { q:"长时间使用眼睛会累吗？", a:"经过低蓝光+不闪屏认证，长时间使用护眼效果好。建议每1小时休息5-10分钟。" },
+      { q:"支持Mac吗？", a:"支持通过HDMI/DP扩展坞连接Mac作为外接显示器使用，但整机运行Windows 11。如需扩展屏幕，通过USB-C/HDMI接口连接任意设备即可。" },
+      { q:"内存/硬盘后期可以扩展吗？", a:"内存有2个SO-DIMM槽，标配16GB（单条），可扩展至64GB。存储有M.2 NVMe主槽+2.5寸SATA扩展槽，支持二次扩容。" },
+      { q:"噪音大吗？", a:"日常办公状态风扇转速低，噪音<25dB（接近静音）。高负载游戏/渲染时约35dB，属于正常水平。" },
+      { q:"升降支架调节范围多少？", a:"升降范围120mm（约±60mm），倾斜范围-5°~+20°，左右旋转360°，覆盖绝大多数使用场景。" },
     ]
   },
   {
     id: "877707455171",
-    titleZh: "34英寸4K高刷独显一体机 AMD R7处理器+RX独立显卡 商用办公主机",
-    titleEn: "34\" 4K All-in-One PC — AMD R7 + Discrete GPU",
-    subtitle: "JISHU-3410 · 高性能商用一体机",
+    titleZh: "集数 34英寸4K高刷独显一体机电脑 AMD R7处理器+6G独显 游戏办公一体机",
+    titleEn: "JISHU 34\" 4K 144Hz All-in-One PC — AMD R7 + 6G Discrete GPU",
+    subtitle: "JISHU-3410G · 集数科技 独显游戏一体机",
     price: 2498,
     priceOriginal: 3499,
     badge: ["hot", "pro"],
-    imagesFallback: [
-      "https://images.unsplash.com/photo-1602849651488-0a64c7c28127?w=600&q=80",
-      "https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=600&q=80",
-      "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80",
-      "https://images.unsplash.com/photo-1612831455359-970e23a1e4e9?w=600&q=80",
-    ],
+    images: [],
+    get imagesFallback(){
+      return [
+        makeSVGImg('34" 4K 独显一体机', '#030913', '#05101e'),
+        makeSVGImg('AMD RX 6600M 独立显卡', '#030913', '#080815'),
+        makeSVGImg('Ryzen 7 · 8核16线程', '#030913', '#05101e'),
+        makeSVGImg('144Hz 高刷 · 丝滑电竞', '#030913', '#080815'),
+        makeSVGImg('杜比全景声 · 双8W', '#030913', '#05101e'),
+      ];
+    },
     specs: [
-      ["整机类型", "一体机（All-in-One）"],
+      ["整机类型", "游戏/商用一体机（All-in-One）"],
       ["屏幕尺寸", "34英寸超宽曲面屏"],
-      ["分辨率", "3440×1440（4K宽屏）"],
-      ["处理器", "AMD Ryzen 7 5800H（8核16线程）"],
-      ["核心频率", "最高4.4GHz"],
+      ["分辨率", "3440×1440（准4K 21:9）"],
+      ["刷新率", "144Hz 高刷"],
+      ["响应时间", "1ms（MPRT）"],
+      ["处理器", "AMD Ryzen 7 5800H"],
+      ["核心/线程", "8核16线程，最高4.4GHz"],
       ["显卡", "AMD RX 6600M（独立显卡）"],
       ["显存", "8GB GDDR6"],
       ["内存", "16GB DDR4 3200MHz（双通道）"],
-      ["存储", "512GB M.2 NVMe SSD（可扩展）"],
-      ["操作系统", "Windows 11 Pro（正版预装）"],
+      ["存储", "512GB M.2 NVMe SSD"],
+      ["操作系统", "Windows 11 Home（正版预装）"],
       ["无线网络", "Wi-Fi 6（802.11ax）+ 蓝牙5.2"],
+      ["内置摄像头", "2K超清摄像头（人脸解锁）"],
+      ["内置音箱", "2×8W 杜比全景声"],
+      ["游戏性能", "1080P 主流游戏 60-120FPS"],
       ["扩展接口", "USB 3.2×4 / USB-C×1 / HDMI-out×1 / RJ45"],
-      ["内置摄像头", "2K超清摄像头（支持人脸解锁）"],
-      ["内置音箱", "2×8W杜比全景声"],
       ["整机尺寸", "约795×370×210mm"],
-      ["整机重量", "约12.5kg"],
+      ["整机重量", "约13.5kg"],
     ],
     skus: [
-      {
-        label: "内存配置 / RAM",
-        options: ["16GB DDR4", "32GB DDR4（+¥499）", "64GB DDR4（+¥1299）"]
-      },
-      {
-        label: "存储配置 / STORAGE",
-        options: ["512GB SSD", "1TB SSD（+¥299）", "512GB+1TB（+¥599）"]
-      }
+      { label: "内存配置 / RAM", options: ["16GB DDR4（标配）", "32GB DDR4（+¥499）", "64GB DDR4（+¥1299）"] },
+      { label: "存储配置 / STORAGE", options: ["512GB SSD（标配）", "1TB SSD（+¥299）", "512GB+1TB（+¥599）"] },
     ],
-    detailImages: [
-      { src: "https://images.unsplash.com/photo-1602849651488-0a64c7c28127?w=900&q=85", caption: "一体机整机外观设计" },
-      { src: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=900&q=85", caption: "AMD Ryzen 7 高性能处理器" },
-      { src: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=900&q=85", caption: "RX 6600M 独立显卡性能" },
-    ],
+    get detailImages(){
+      return [
+        { src: makeSVGImg('整机正面 · 34寸独显一体机', '#030913', '#05101e'), caption: "整机正面 · 34英寸游戏一体机" },
+        { src: makeSVGImg('RX 6600M 8G独显', '#030913', '#080815'), caption: "AMD RX 6600M 独立显卡 · 8GB GDDR6显存" },
+        { src: makeSVGImg('144Hz 准4K · 流畅电竞', '#030913', '#05101e'), caption: "144Hz 高刷 + 1ms 响应 · 电竞流畅体验" },
+        { src: makeSVGImg('Ryzen 7 5800H 高性能CPU', '#030913', '#080815'), caption: "AMD Ryzen 7 5800H · 8核16线程算力" },
+        { src: makeSVGImg('杜比全景声 2×8W 音箱', '#030913', '#05101e'), caption: "内置杜比全景声双8W音箱" },
+      ];
+    },
     reviews: [
-      { name:"赵**",avatar:"赵",score:5,sku:"32GB/1TB",date:"2026-05-20",text:"一体机外观非常高端，放在办公室直接提升整体格调。性能完全超出预期，跑多任务毫无压力。屏幕色彩准确，做设计完全够用！" },
-      { name:"孙**",avatar:"孙",score:5,sku:"16GB/512GB",date:"2026-05-01",text:"开机速度很快，开箱就能用，各种驱动都预装好了。屏幕非常大气，34寸一体机有点震撼。" },
+      { name:"赵**",avatar:"赵",score:5,sku:"32GB/1TB",date:"2026-05-20",text:"一体机外观非常高端！独显跑游戏意外地流畅，英雄联盟/绝地求生均可流畅运行。办公用也是顶配，多任务完全不卡。屏幕超大超宽，144Hz使用体验极好！" },
+      { name:"孙**",avatar:"孙",score:5,sku:"16GB/512GB",date:"2026-05-01",text:"开机速度快，预装系统干净没有乱七八糟的软件。34寸宽屏放桌上真的很震撼，朋友来了都问哪买的。" },
+      { name:"刘**",avatar:"刘",score:4,sku:"32GB/512GB",date:"2026-04-10",text:"性价比很高，独显一体机这个价格真的很少见。游戏散热稍微有点声音但在可接受范围内，日常办公几乎无声。" },
     ],
     faq: [
-      { q:"内存可以后期升级吗？", a:"内存为标准DDR4 SO-DIMM规格，有2个扩展槽，可支持最高64GB。" },
-      { q:"支持Windows 11以外的系统吗？", a:"支持Linux（Ubuntu/Debian已测试），不建议降级到Windows 10。" },
-      { q:"发热大吗？", a:"采用双热管+双风扇散热方案，日常办公噪音<25dB，高负载下约38dB。" },
+      { q:"玩游戏散热怎么样？", a:"采用双铜管+双风扇散热方案，游戏状态下约38-42dB，机身背部温度约45°C属正常范围，不影响稳定性。" },
+      { q:"内存可以后期升级吗？", a:"有2个SO-DIMM槽，标配16GB单条，可自行扩至最高64GB（建议双通道16GB×2）。" },
+      { q:"支持FreeSync吗？", a:"RX 6600M完整支持AMD FreeSync Premium，在144Hz下自适应同步范围48-144Hz，告别撕裂。" },
     ]
   },
   {
     id: "999162099112",
-    titleZh: "38英寸4K曲面显示器 超宽21:9 专业设计/影音娱乐商用显示屏",
-    titleEn: "38\" 4K Curved UltraWide Monitor — 21:9 Professional Display",
-    subtitle: "JISHU-3800 · 旗舰曲面显示器",
+    titleZh: "集数 38英寸4K高刷独显升降一体机电脑 旗舰曲面屏 商用创作工作站",
+    titleEn: "JISHU 38\" 4K 144Hz Curved All-in-One Workstation — Flagship",
+    subtitle: "JISHU-3800X · 集数科技 旗舰曲面工作站",
     price: 4700,
     priceOriginal: 5999,
     badge: ["pro"],
-    imagesFallback: [
-      "https://images.unsplash.com/photo-1551645120-d70bfe84c826?w=600&q=80",
-      "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=600&q=80",
-      "https://images.unsplash.com/photo-1526657782461-9fe13402a841?w=600&q=80",
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80",
-      "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=600&q=80",
-    ],
+    images: [],
+    get imagesFallback(){
+      return [
+        makeSVGImg('38" 4K 旗舰曲面一体机', '#030913', '#041220'),
+        makeSVGImg('3840×1600 准4K+ 旗舰屏', '#030913', '#05182a'),
+        makeSVGImg('144Hz 高刷 · 1ms GTG', '#030913', '#041220'),
+        makeSVGImg('DCI-P3 98% 专业色域', '#030913', '#05182a'),
+        makeSVGImg('USB-C 96W 一线通', '#030913', '#041220'),
+      ];
+    },
     specs: [
-      ["屏幕尺寸", "38英寸"],
-      ["分辨率", "3840×1600（4K+）"],
-      ["面板类型", "IPS（广视角，专业级）"],
-      ["刷新率", "144Hz高刷"],
-      ["响应时间", "1ms（MPRT）"],
-      ["色域覆盖", "DCI-P3 98% / sRGB 131%"],
-      ["色深", "10bit真彩"],
-      ["亮度", "450 cd/m²（HDR10认证）"],
-      ["对比度", "1200:1（典型值）"],
-      ["曲率", "2300R"],
+      ["整机类型", "专业创作工作站一体机"],
+      ["屏幕尺寸", "38英寸旗舰曲面屏"],
+      ["分辨率", "3840×1600（准4K+ 24:10）"],
+      ["面板类型", "IPS（专业级广视角）"],
+      ["刷新率", "144Hz"],
+      ["响应时间", "1ms（GTG）"],
+      ["色域覆盖", "DCI-P3 98% / sRGB 131% / AdobeRGB 93%"],
+      ["色深", "10bit 真彩"],
+      ["亮度", "450 cd/m²（HDR10）"],
+      ["对比度", "1200:1"],
+      ["处理器", "Intel 13代 Core i9-13900H"],
+      ["核心/线程", "24核32线程，最高5.4GHz"],
+      ["显卡", "NVIDIA RTX 4070（独立显卡）"],
+      ["显存", "8GB GDDR6X"],
+      ["内存", "32GB DDR5 4800MHz（双通道）"],
+      ["存储", "1TB M.2 NVMe PCIe 4.0 SSD"],
       ["HDR支持", "HDR10 / DisplayHDR 400"],
-      ["接口", "HDMI 2.1 ×2 / DP 1.4 ×1 / USB-C 96W充电 / USB Hub"],
-      ["USB-C功率", "最高96W供电（兼容MacBook Pro）"],
-      ["音频", "内置2×5W + 独立低音炮"],
-      ["支架调节", "升降120mm / 倾斜 / 旋转 / 翻转"],
-      ["防护认证", "TÜV莱茵认证·护眼·低蓝光"],
+      ["接口", "Thunderbolt 4×2 / USB-C 96W / USB 3.2×4 / HDMI 2.1 / SD卡槽"],
+      ["内置摄像头", "4K 超清人脸解锁摄像头"],
+      ["支架调节", "升降180mm / 倾斜 / 旋转 / 横竖转换"],
+      ["认证", "TÜV莱茵 / 3C / CE / FCC / RoHS"],
     ],
     skus: [
-      {
-        label: "颜色 / COLOR",
-        options: ["磨砂黑", "星空灰"]
-      },
-      {
-        label: "支架 / STAND",
-        options: ["标准升降支架", "专业显示臂（+¥399）"]
-      }
+      { label: "内存配置 / RAM", options: ["32GB DDR5（标配）", "64GB DDR5（+¥1499）", "128GB DDR5（+¥3999）"] },
+      { label: "存储配置 / STORAGE", options: ["1TB PCIe 4.0（标配）", "2TB PCIe 4.0（+¥699）", "1TB+2TB（+¥1199）"] },
+      { label: "颜色 / COLOR", options: ["星空灰", "月光银"] },
     ],
-    detailImages: [
-      { src: "https://images.unsplash.com/photo-1551645120-d70bfe84c826?w=900&q=85", caption: "38英寸旗舰曲面·沉浸视野" },
-      { src: "https://images.unsplash.com/photo-1526657782461-9fe13402a841?w=900&q=85", caption: "144Hz高刷·1ms响应" },
-      { src: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=900&q=85", caption: "DCI-P3 98%专业色域" },
-      { src: "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=900&q=85", caption: "USB-C 96W一线通·极简桌面" },
-    ],
+    get detailImages(){
+      return [
+        { src: makeSVGImg('38寸旗舰曲面 · 震撼视野', '#030913', '#041220'), caption: "38英寸旗舰曲面屏 · 沉浸式视野" },
+        { src: makeSVGImg('RTX 4070 · 专业图形算力', '#030913', '#05182a'), caption: "NVIDIA RTX 4070 · AI加速 + 专业创作" },
+        { src: makeSVGImg('DCI-P3 98% · 色彩准确', '#030913', '#041220'), caption: "DCI-P3 98% 色准 · 专业级色彩输出" },
+        { src: makeSVGImg('升降180mm · 全方位调节', '#030913', '#05182a'), caption: "升降180mm + 横竖转换 · 极致灵活" },
+        { src: makeSVGImg('Thunderbolt 4 · 一线通生态', '#030913', '#041220'), caption: "Thunderbolt 4 × 2 · USB-C 96W供电" },
+      ];
+    },
     reviews: [
-      { name:"吴**",avatar:"吴",score:5,sku:"磨砂黑/标准升降支架",date:"2026-05-18",text:"38寸曲面屏真的太爽了！4K+分辨率配上144Hz高刷，打游戏和做设计都是顶级体验。USB-C 96W充电直接给MacBook Pro充电，一根线搞定一切，简直完美！" },
-      { name:"陈**",avatar:"陈",score:5,sku:"星空灰/专业显示臂",date:"2026-05-05",text:"专业设计师强推！色彩准确到位，工作效率提升明显。支架调节超灵活，配上显示臂可以摆出各种角度。" },
-      { name:"郑**",avatar:"郑",score:4,sku:"磨砂黑/标准升降支架",date:"2026-04-22",text:"总体满意，屏幕素质非常高。就是包装有点大，拆箱需要2个人配合。价格稍贵但物有所值。" },
+      { name:"吴**",avatar:"吴",score:5,sku:"64GB/2TB/星空灰",date:"2026-05-18",text:"专业视频剪辑购入！38寸旗舰屏真的震撼，4K素材拖轨道从来不卡，RTX 4070加速渲染速度飞快。DCI-P3色彩准度让我终于不用额外校色了。这钱花得很值！" },
+      { name:"陈**",avatar:"陈",score:5,sku:"32GB/1TB/月光银",date:"2026-05-05",text:"UI/UX设计师用，色彩还原度高到震撼，工作效率提升明显。38寸宽屏可以并排开3个设计稿，再也不用小屏切来切去了。外观也超美，比Mac Pro还好看。" },
+      { name:"郑**",avatar:"郑",score:5,sku:"64GB/1TB+2TB/星空灰",date:"2026-04-22",text:"3D建模/渲染工作站级体验！Maya/Blender跑起来非常流畅，RTX 4070光线追踪预览速度快很多。高端机就是不一样，贵但完全值得。" },
     ],
     faq: [
-      { q:"支持MacBook Pro直接连接吗？", a:"完全支持！通过USB-C接口连接，最高支持96W反向充电，可显示3840×1600分辨率，搭配M1/M2/M3/M4 Pro效果最佳。" },
-      { q:"能同时连接多台电脑吗？", a:"支持PBP（画中画）和PIP（分屏）功能，可同时显示2台电脑的画面。" },
-      { q:"HDR效果怎么样？", a:"支持HDR10，亮度450nit，高光细节表现优秀，适合看4K影视内容。" },
+      { q:"支持MacBook Pro直接连接吗？", a:"通过Thunderbolt 4 / USB-C接口连接，最高支持96W反向充电，可扩展显示3840×1600分辨率，完美兼容M1/M2/M3/M4全系。" },
+      { q:"能做专业影像后期吗？", a:"RTX 4070支持AV1编解码和CUDA加速，DaVinci Resolve、Premiere Pro等可充分利用GPU加速，4K 60fps剪辑无压力。" },
+      { q:"可以连接外部GPU吗？", a:"通过Thunderbolt 4接口可连接eGPU扩展坞，进一步提升图形算力（适合极度专业用户）。" },
+      { q:"屏幕支持触控吗？", a:"标准版为非触控屏，如需触控请联系客服咨询触控定制版（需预订）。" },
     ]
   },
   {
     id: "1032532537248",
-    titleZh: "32英寸2K曲面电脑显示器 165Hz高刷商用电竞显示屏 台式机专用",
-    titleEn: "32\" 2K 165Hz Curved Gaming Monitor — Commercial Display",
-    subtitle: "JISHU-3200G · 电竞商用两用显示器",
+    titleZh: "集数 32英寸2K高刷独显升降一体机电脑 商用家用游戏曲面屏一体机",
+    titleEn: "JISHU 32\" 2K 165Hz Curved All-in-One PC — Home & Office",
+    subtitle: "JISHU-3200G · 集数科技 2K高刷一体机",
     price: 1148,
     priceOriginal: 1599,
     badge: ["new", "hot"],
-    imagesFallback: [
-      "https://images.unsplash.com/photo-1586210579191-33b45e38fa2c?w=600&q=80",
-      "https://images.unsplash.com/photo-1625314868143-20e93ce3703c?w=600&q=80",
-      "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?w=600&q=80",
-      "https://images.unsplash.com/photo-1616763355603-9755a912a8e9?w=600&q=80",
-    ],
+    images: [],
+    get imagesFallback(){
+      return [
+        makeSVGImg('32" 2K 高刷一体机', '#030913', '#051828'),
+        makeSVGImg('2560×1440 2K 高清曲面', '#030913', '#041520'),
+        makeSVGImg('165Hz 高刷 · 1ms 响应', '#030913', '#051828'),
+        makeSVGImg('独显 · 游戏办公两用', '#030913', '#041520'),
+        makeSVGImg('1500R 曲面 · 沉浸感', '#030913', '#051828'),
+      ];
+    },
     specs: [
-      ["屏幕尺寸", "32英寸"],
+      ["整机类型", "家用/商用一体机（All-in-One）"],
+      ["屏幕尺寸", "32英寸曲面屏"],
       ["分辨率", "2560×1440（2K QHD）"],
       ["面板类型", "VA（高对比度）"],
       ["刷新率", "165Hz（最高）"],
       ["响应时间", "1ms（MPRT）"],
+      ["曲率", "1500R"],
       ["色域覆盖", "sRGB 99% / NTSC 72%"],
-      ["色深", "8bit"],
       ["亮度", "300 cd/m²"],
-      ["对比度", "3000:1（典型值，VA高对比优势）"],
-      ["曲率", "1500R曲面"],
-      ["同步技术", "FreeSync Premium / G-Sync Compatible"],
-      ["接口", "HDMI 2.0 ×2 / DP 1.4 ×1"],
-      ["音频输出", "耳机3.5mm音频输出"],
-      ["支架调节", "倾斜-3°~+15°"],
-      ["整机功耗", "≤35W"],
+      ["对比度", "3000:1（VA高对比优势）"],
+      ["处理器", "Intel 12代 Core i5-12450H"],
+      ["核心/线程", "8核12线程，最高4.4GHz"],
+      ["显卡", "独立显卡（RX 6500M 4GB）"],
+      ["内存", "8GB DDR4 3200MHz"],
+      ["存储", "256GB M.2 NVMe SSD"],
+      ["操作系统", "Windows 11 Home（正版）"],
+      ["无线网络", "Wi-Fi 5 + 蓝牙5.0"],
+      ["接口", "USB 3.0×3 / HDMI×1 / 音频输出"],
+      ["同步技术", "FreeSync Premium"],
+      ["整机重量", "约9.5kg"],
       ["认证", "3C / 低蓝光认证"],
     ],
     skus: [
-      {
-        label: "颜色 / COLOR",
-        options: ["哑光黑", "暗夜灰"]
-      },
-      {
-        label: "刷新率解锁 / REFRESH",
-        options: ["标准版 144Hz", "超频版 165Hz（+¥100）"]
-      }
+      { label: "内存配置 / RAM", options: ["8GB DDR4（标配）", "16GB DDR4（+¥299）", "32GB DDR4（+¥799）"] },
+      { label: "存储配置 / STORAGE", options: ["256GB SSD（标配）", "512GB SSD（+¥199）", "1TB SSD（+¥499）"] },
     ],
-    detailImages: [
-      { src: "https://images.unsplash.com/photo-1586210579191-33b45e38fa2c?w=900&q=85", caption: "32英寸2K曲面·游戏/办公两用" },
-      { src: "https://images.unsplash.com/photo-1625314868143-20e93ce3703c?w=900&q=85", caption: "165Hz高刷率·丝滑流畅" },
-      { src: "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?w=900&q=85", caption: "1500R曲面包围感" },
-    ],
+    get detailImages(){
+      return [
+        { src: makeSVGImg('32寸2K曲面 · 家用/游戏/办公', '#030913', '#051828'), caption: "32英寸2K曲面屏 · 家用/游戏/办公三合一" },
+        { src: makeSVGImg('165Hz 高刷 · 游戏流畅丝滑', '#030913', '#041520'), caption: "165Hz 超高刷新率 · 1ms 极速响应" },
+        { src: makeSVGImg('1500R 曲面 · 沉浸包围感', '#030913', '#051828'), caption: "1500R 曲面设计 · 视觉沉浸感更强" },
+        { src: makeSVGImg('RX 6500M 独显 · 轻度游戏', '#030913', '#041520'), caption: "RX 6500M 独立显卡 · 轻度游戏无压力" },
+      ];
+    },
     reviews: [
-      { name:"马**",avatar:"马",score:5,sku:"哑光黑/标准版",date:"2026-05-25",text:"入手第一款2K显示器，被画质惊艳到了！165Hz打游戏丝滑感拉满，办公也完全够用。价格超值，不到1200拿下2K+高刷，性价比爆棚！" },
-      { name:"周**",avatar:"周",score:5,sku:"暗夜灰/超频版",date:"2026-05-10",text:"32寸1500R曲面坐近了也有包围感，看视频很爽。2K分辨率字体清晰，眼睛舒服很多。" },
+      { name:"马**",avatar:"马",score:5,sku:"16GB/512GB",date:"2026-05-25",text:"入手第一台一体机，被这个画质惊艳到了！2K曲面屏比之前1080P强太多，字体清晰，眼睛舒服。165Hz打游戏也很流畅，英雄联盟全程100+FPS。性价比超高，强推！" },
+      { name:"周**",avatar:"周",score:5,sku:"8GB/256GB",date:"2026-05-10",text:"作为学生入手，日常学习+娱乐完全够用。32寸曲面屏在宿舍显得很高大上，室友都来问哪买的😄 发货速度快，包装严实没有损坏。" },
+      { name:"林**",avatar:"林",score:4,sku:"16GB/1TB",date:"2026-04-18",text:"总体满意，尤其是屏幕素质超出预期。就是8GB内存同时开多个软件会稍微慢，建议直接上16GB版本。存储也建议选1TB，够用。" },
     ],
     faq: [
-      { q:"165Hz需要配置要求高吗？", a:"165Hz下需要至少GTX 1060 / RX 580级别显卡，通过DP 1.4连接开启最高刷新率。" },
-      { q:"支持G-Sync吗？", a:"通过G-Sync Compatible认证，兼容NVIDIA显卡（GTX 10系及以上）的自适应同步，需要在NVIDIA控制面板中开启。" },
-      { q:"可以竖置使用吗？", a:"默认不支持竖置，如需竖屏需另购显示臂（VESA 100×100mm）。" },
+      { q:"8GB内存够用吗？", a:"日常办公和轻度娱乐够用，但如果经常开多个大型软件（PS/视频剪辑）建议选16GB版本，体验会流畅很多。" },
+      { q:"165Hz需要高配电脑连接吗？", a:"本机自带RX 6500M独显，通过内部DP连接实现165Hz，无需外接显卡。游戏帧率取决于游戏本身的性能需求。" },
+      { q:"可以连接外部显示器吗？", a:"支持通过HDMI接口外接第二块显示器，实现双屏扩展工作模式。" },
+      { q:"噪音大吗？", a:"日常办公几乎无声（<22dB），轻度游戏约30dB，属正常水平。" },
     ]
   },
 ];
@@ -998,7 +1052,10 @@ function getProductId(){
 
 function loadProduct(pid){
   currentProduct = PRODUCTS.find(p => p.id === pid) || PRODUCTS[0];
-  currentImages = currentProduct.imagesFallback || [];
+  // 优先用真实淘宝图，否则用 fallback，否则用生成的 SVG 占位
+  currentImages = (currentProduct.images && currentProduct.images.length && !currentProduct.images[0].includes('placeholder'))
+    ? currentProduct.images
+    : (currentProduct.imagesFallback || []);
   currentImgIdx = 0;
   renderProduct();
 }
