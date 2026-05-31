@@ -1194,13 +1194,23 @@ const PRODUCTS = [
   },
   {
     id: "1032532537248",
-    titleZh: "集数 32英寸2K高刷独显升降一体机电脑 商用家用游戏曲面屏一体机",
+    titleZh: "【JISHU/集数】32寸2K高刷独显升降一体机电脑 商用家用游戏曲面屏一体机",
     titleEn: "JISHU 32\" 2K 165Hz Curved All-in-One PC — Home & Office",
     subtitle: "JISHU-3200G · 集数科技 2K高刷一体机",
     price: 1148,
-    priceOriginal: 1599,
+    priceOriginal: 1399,
     badge: ["new", "hot"],
-    images: [],
+    // ── 真实淘宝图片（提取自商品页）──
+    images: [
+      "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01A3pkXY1wxLeSzCJpR_!!4126786374.png",
+      "https://img.alicdn.com/imgextra/i1/4126786374/O1CN01LXr3jy1wxLeR52KjI_!!4126786374.jpg",
+      "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01IZ5DFb1wxLeRjUZbU_!!4126786374.jpg",
+      "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01zf5qsm1wxLdhqRQkw_!!4126786374.jpg",
+      "https://img.alicdn.com/imgextra/i4/4126786374/O1CN01I32o2C1wxLd9BBpLF_!!4126786374.png",
+    ],
+    // 视频封面
+    videoPoster: "https://img.alicdn.com/imgextra/i2/4126786374/O1CN01A3pkXY1wxLeSzCJpR_!!4126786374.png",
+    // 动态生成的 SVG 图片兜底
     get imagesFallback(){
       return [
         makeSVGImg('32" 2K 高刷一体机', '#030913', '#051828'),
@@ -1247,10 +1257,12 @@ const PRODUCTS = [
     ],
     get detailImages(){
       return [
-        { src: makeSVGImg('32寸2K曲面 · 家用/游戏/办公', '#030913', '#051828'), caption: "32英寸2K曲面屏 · 家用/游戏/办公三合一" },
+        // ── 真实淘宝详情图（提取自商品页）──
+        { src: "https://img.alicdn.com/imgextra/i4/O1CN01Dc9PxV1XzlCMO1boO_!!6000000002995-2-tps-3456-864.png", caption: "32英寸曲面屏 · 沉浸游戏体验" },
+        { src: "https://gw.alicdn.com/imgextra/i4/O1CN012YkS1S20pKuSLCT05_!!6000000006898-0-tps-720-280.jpg", caption: "集数科技 · 专业品质保障" },
+        // ── SVG 兜底图 ──
         { src: makeSVGImg('165Hz 高刷 · 游戏流畅丝滑', '#030913', '#041520'), caption: "165Hz 超高刷新率 · 1ms 极速响应" },
         { src: makeSVGImg('1500R 曲面 · 沉浸包围感', '#030913', '#051828'), caption: "1500R 曲面设计 · 视觉沉浸感更强" },
-        { src: makeSVGImg('RX 6500M 独显 · 轻度游戏', '#030913', '#041520'), caption: "RX 6500M 独立显卡 · 轻度游戏无压力" },
       ];
     },
     reviews: [
