@@ -1104,13 +1104,23 @@ const PRODUCTS = [
   },
   {
     id: "999162099112",
-    titleZh: "集数 38英寸4K高刷独显升降一体机电脑 旗舰曲面屏 商用创作工作站",
+    titleZh: "【JISHU/集数】38寸4K高刷独显升降一体机电脑 旗舰曲面屏 商用创作工作站",
     titleEn: "JISHU 38\" 4K 144Hz Curved All-in-One Workstation — Flagship",
     subtitle: "JISHU-3800X · 集数科技 旗舰曲面工作站",
     price: 4700,
-    priceOriginal: 5999,
+    priceOriginal: 5299,
     badge: ["pro"],
-    images: [],
+    // ── 真实淘宝图片（提取自商品页）──
+    images: [
+      "https://img.alicdn.com/imgextra/i1/4126786374/O1CN0175o9Xp1wxLdGbU7Rk_!!4126786374.png",
+      "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01qVTJ211wxLdHKqwQb_!!4126786374.png",
+      "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01hbOMko1wxLdBI7krr_!!4126786374.png",
+      "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01ha4YDP1wxLdGrAF4X_!!4126786374.jpg",
+      "https://img.alicdn.com/imgextra/i3/4126786374/O1CN01DRDW2d1wxLdGr8QlY_!!4126786374.png",
+    ],
+    // 视频封面
+    videoPoster: "https://img.alicdn.com/imgextra/i1/4126786374/O1CN0175o9Xp1wxLdGbU7Rk_!!4126786374.png",
+    // 动态生成的 SVG 图片兜底
     get imagesFallback(){
       return [
         makeSVGImg('38" 4K 旗舰曲面一体机', '#030913', '#041220'),
@@ -1161,11 +1171,13 @@ const PRODUCTS = [
     ],
     get detailImages(){
       return [
-        { src: makeSVGImg('38寸旗舰曲面 · 震撼视野', '#030913', '#041220'), caption: "38英寸旗舰曲面屏 · 沉浸式视野" },
+        // ── 真实淘宝详情图（提取自商品页）──
+        { src: "https://img.alicdn.com/imgextra/i4/O1CN01Dc9PxV1XzlCMO1boO_!!6000000002995-2-tps-3456-864.png", caption: "38英寸旗舰曲面 · 超宽沉浸视野" },
+        { src: "https://gw.alicdn.com/imgextra/i4/O1CN012YkS1S20pKuSLCT05_!!6000000006898-0-tps-720-280.jpg", caption: "集数科技 · 专业品质保障" },
+        // ── SVG 兜底图 ──
         { src: makeSVGImg('RTX 4070 · 专业图形算力', '#030913', '#05182a'), caption: "NVIDIA RTX 4070 · AI加速 + 专业创作" },
         { src: makeSVGImg('DCI-P3 98% · 色彩准确', '#030913', '#041220'), caption: "DCI-P3 98% 色准 · 专业级色彩输出" },
         { src: makeSVGImg('升降180mm · 全方位调节', '#030913', '#05182a'), caption: "升降180mm + 横竖转换 · 极致灵活" },
-        { src: makeSVGImg('Thunderbolt 4 · 一线通生态', '#030913', '#041220'), caption: "Thunderbolt 4 × 2 · USB-C 96W供电" },
       ];
     },
     reviews: [
